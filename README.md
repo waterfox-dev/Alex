@@ -1,7 +1,9 @@
 # Alex : A tool to manage library infrastructure
 
 <center>
+
 ![Alex Logo](alex-res/logo.png)
+
 </center>
 
 **Alex is a suite of software tools to manage library infrastructure: books, user, borrowing, and more.**
