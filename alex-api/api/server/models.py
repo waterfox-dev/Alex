@@ -94,7 +94,7 @@ class Book(Model):
     
     isbn = BigIntegerField()
     title = CharField(max_length=255) 
-    author = ManyToManyField('Author', related_name='books')
+    authors = ManyToManyField('Author', related_name='books')
     shelf = ForeignKey('Shelf', related_name='books', on_delete=CASCADE)
     availability = ForeignKey(BookAvailability, related_name='books', on_delete=CASCADE)
     state = ForeignKey(BookState, related_name='books', on_delete=CASCADE)

@@ -16,7 +16,31 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.urls.conf import include
+
+from rest_framework import routers
+
+from server.viewset import AuthorViewSet
+from server.viewset import ShelfViewSet
+from server.viewset import EditionViewSet
+from server.viewset import BookStateViewSet
+from server.viewset import BookAvailabilityViewSet
+from server.viewset import BookViewSet
+from server.viewset import BookViewSet
+
+router = routers.DefaultRouter()
+
+router.register(r'authors', AuthorViewSet, basename='author')
+router.register(r'shelves', ShelfViewSet, basename='shelf')
+router.register(r'editions', EditionViewSet, basename='edition')
+router.register(r'bookstates', BookStateViewSet, basename='bookstate')
+router.register(r'bookavailabilities', BookAvailabilityViewSet, basename='bookavailability')
+router.register(r'books', BookViewSet, basename='book')
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api-auth/', include('rest_framework.urls')),
+    path('api/', include(router.urls)),
 ]
