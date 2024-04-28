@@ -3,6 +3,7 @@ from django.db.models import Model
 from django.db.models import CharField 
 from django.db.models import DateTimeField
 from django.db.models import IntegerField
+from django.db.models import BigIntegerField
 from django.db.models import URLField
 from django.db.models import BooleanField
 from django.db.models import TextField
@@ -30,6 +31,8 @@ class Author(Model):
     updated_at = DateTimeField(auto_now=True) 
     active =  BooleanField(default=True)
     
+    def __str__(self):
+        return f'[{self.id}]-{self.first_name} {self.name}'
 
 class Shelf(Model): 
     
@@ -45,6 +48,9 @@ class Shelf(Model):
     updated_at = DateTimeField(auto_now=True) 
     active =  BooleanField(default=True)
     
+    def __str__(self):
+        return f'[{self.id}]-{self.name}'
+    
 
 class BookAvailability(Model): 
     
@@ -58,7 +64,9 @@ class BookAvailability(Model):
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True) 
     active =  BooleanField(default=True)
-
+    
+    def __str__(self):
+        return f'[{self.id}]-{self.name}'
 
 class BookState(Model):
         
@@ -72,6 +80,9 @@ class BookState(Model):
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True) 
     active =  BooleanField(default=True)
+    
+    def __str__(self):
+        return f'[{self.id}]-{self.name}'
 
 
 class Book(Model): 
@@ -81,7 +92,7 @@ class Book(Model):
     
     id = AutoField(primary_key=True)
     
-    isbn = IntegerField()
+    isbn = BigIntegerField()
     title = CharField(max_length=255) 
     author = ManyToManyField('Author', related_name='books')
     shelf = ForeignKey('Shelf', related_name='books', on_delete=CASCADE)
@@ -92,6 +103,8 @@ class Book(Model):
     updated_at = DateTimeField(auto_now=True) 
     active =  BooleanField(default=True)
 
+    def __str__(self):
+        return f'[{self.id}]-{self.title} ({self.isbn})'
 
 class Edition(Model): 
     
@@ -109,3 +122,6 @@ class Edition(Model):
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True) 
     active =  BooleanField(default=True)
+    
+    def __str__(self):
+        return f'[{self.id}]-{self.name} ({self.publisher})'
