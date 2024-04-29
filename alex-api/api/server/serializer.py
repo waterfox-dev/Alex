@@ -3,7 +3,7 @@ from rest_framework.serializers import ModelSerializer
 from server.models import Book
 from server.models import Author
 from server.models import Shelf
-from server.models import Edition
+from server.models import Publisher
 from server.models import BookState
 from server.models import BookAvailability
 
@@ -19,13 +19,6 @@ class ShelfSerializer(ModelSerializer):
     
     class Meta:
         model = Shelf
-        fields = '__all__'
-        
-
-class EditionSerializer(ModelSerializer):
-    
-    class Meta:
-        model = Edition
         fields = '__all__'
         
 
@@ -47,7 +40,6 @@ class BookSerializer(ModelSerializer):
     
     authors = AuthorSerializer(many=True)
     shelf = ShelfSerializer()
-    editions = EditionSerializer(many=True)
     state = BookStateSerializer()
     availability = BookAvailabilitySerializer()
     
@@ -71,12 +63,6 @@ class ShelfSerializerList(ModelSerializer):
         fields = ['id', 'name']
         
 
-class EditionSerializerList(ModelSerializer):
-    
-    class Meta:
-        model = Edition
-        fields = ['id', 'name', 'publisher', 'publication_date', 'cover']
-        
 
 class BookStateSerializerList(ModelSerializer):
     
@@ -84,7 +70,20 @@ class BookStateSerializerList(ModelSerializer):
         model = BookState
         fields = ['id', 'name'] 
         
+class PublisherSerializer(ModelSerializer):
+    
+    class Meta:
+        model = Publisher
+        fields = '__all__'
+        
 
+class PublisherSerializerList(ModelSerializer):
+    
+    class Meta:
+        model = Publisher
+        fields = ['id', 'name']
+        
+        
 class BookAvailabilitySerializerList(ModelSerializer):
     
     class Meta:
@@ -96,11 +95,12 @@ class BookSerializerList(ModelSerializer):
     
     authors = AuthorSerializerList(many=True)
     shelf = ShelfSerializerList()
-    editions = EditionSerializerList(many=True)
     state = BookStateSerializerList()
     availability = BookAvailabilitySerializerList()
+    publisher = PublisherSerializerList()
     
     
     class Meta:
         model = Book
-        fields = ['id', 'isbn', 'title', 'authors', 'shelf', 'editions', 'state', 'availability']
+        fields = ['id', 'isbn', 'title', 'authors', 'shelf', 'editions', 'state', 'cover', 'publisher', 'availability']
+        

@@ -3,23 +3,23 @@ from rest_framework.viewsets import ModelViewSet
 from server.models import Book
 from server.models import Author
 from server.models import Shelf
-from server.models import Edition
+from server.models import Publisher
 from server.models import BookState
 from server.models import BookAvailability
 
 from server.serializer import BookSerializer
 from server.serializer import AuthorSerializer
 from server.serializer import ShelfSerializer
-from server.serializer import EditionSerializer
 from server.serializer import BookStateSerializer
 from server.serializer import BookAvailabilitySerializer
+from server.serializer import PublisherSerializer
 
 from server.serializer import AuthorSerializerList
 from server.serializer import BookSerializerList
-from server.serializer import EditionSerializerList
 from server.serializer import ShelfSerializerList
 from server.serializer import BookStateSerializerList
 from server.serializer import BookAvailabilitySerializerList
+from server.serializer import PublisherSerializerList
 
 
 class AuthorViewSet(ModelViewSet):
@@ -52,20 +52,7 @@ class ShelfViewSet(ModelViewSet):
         
         return ShelfSerializer    
 
-class EditionViewSet(ModelViewSet):
-    
-    queryset = Edition.objects.all()
-    serializer_class = EditionSerializer
-    
-    def get_queryset(self):
-        return Edition.objects.filter(active=True)
-    
-    def get_serializer_class(self):
-        
-        if self.action == 'list':
-            return EditionSerializerList
-        
-        return EditionSerializer
+
     
 class BookStateViewSet(ModelViewSet):
     
@@ -112,18 +99,18 @@ class BookViewSet(ModelViewSet):
         
         return BookSerializer
 
-class EditionViewSet(ModelViewSet):
+class PublisherViewSet(ModelViewSet):
     
-    queryset = Edition.objects.all()
-    serializer_class = EditionSerializer
+    queryset = Publisher.objects.all()
+    serializer_class = PublisherSerializer
     
     def get_queryset(self):
-        return Edition.objects.filter(active=True)
+        return Publisher.objects.filter(active=True)
     
     def get_serializer_class(self):
         
         if self.action == 'list':
-            return EditionSerializerList
+            return PublisherSerializerList
         
-        return EditionSerializer
-    
+        return PublisherSerializer
+

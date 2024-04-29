@@ -85,6 +85,23 @@ class BookState(Model):
         return f'[{self.id}]-{self.name}'
 
 
+class Publisher(Model): 
+    
+    class Meta:
+        db_table = f'{DATABASE_TABLE_PREFIX}_publisher'
+    
+    id = AutoField(primary_key=True)
+    
+    name = CharField(max_length=255) 
+        
+    created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True) 
+    active =  BooleanField(default=True)
+    
+    def __str__(self):
+        return f'[{self.id}]-{self.name}'
+    
+    
 class Book(Model): 
     
     class Meta:
@@ -98,6 +115,11 @@ class Book(Model):
     shelf = ForeignKey('Shelf', related_name='books', on_delete=CASCADE)
     availability = ForeignKey(BookAvailability, related_name='books', on_delete=CASCADE)
     state = ForeignKey(BookState, related_name='books', on_delete=CASCADE)
+    published_date = DateField(null=True, blank=True)
+    editions = IntegerField(default=1) 
+    cover = URLField(null=True, blank=True)
+    publisher = ForeignKey(Publisher, related_name='books', on_delete=CASCADE, null=True, blank=True)
+    
     
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True) 
@@ -106,22 +128,3 @@ class Book(Model):
     def __str__(self):
         return f'[{self.id}]-{self.title} ({self.isbn})'
 
-class Edition(Model): 
-    
-    class Meta:
-        db_table = f'{DATABASE_TABLE_PREFIX}_edition'
-    
-    id = AutoField(primary_key=True)
-    
-    name = CharField(max_length=255)
-    publisher = CharField(max_length=255)
-    publication_date = DateField()
-    book = ForeignKey('Book', related_name='editions', on_delete=CASCADE)
-    cover = URLField(null=True, blank=True)
-    
-    created_at = DateTimeField(auto_now_add=True)
-    updated_at = DateTimeField(auto_now=True) 
-    active =  BooleanField(default=True)
-    
-    def __str__(self):
-        return f'[{self.id}]-{self.name} ({self.publisher})'
