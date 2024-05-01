@@ -35,6 +35,12 @@ class BookAvailabilitySerializer(ModelSerializer):
         model = BookAvailability
         fields = '__all__'
 
+class PublisherSerializer(ModelSerializer):
+    
+    class Meta:
+        model = Publisher
+        fields = '__all__'
+
 
 class BookSerializer(ModelSerializer):
     
@@ -42,11 +48,12 @@ class BookSerializer(ModelSerializer):
     shelf = ShelfSerializer()
     state = BookStateSerializer()
     availability = BookAvailabilitySerializer()
+    publisher = PublisherSerializer()
     
     
     class Meta:
         model = Book
-        fields = ['id', 'isbn', 'title', 'authors', 'shelf', 'editions', 'state', 'availability']
+        fields = ['id', 'isbn', 'title', 'authors', 'shelf', 'editions', 'state', 'availability', 'publisher', 'cover']
  
 
 class AuthorSerializerList(ModelSerializer):
@@ -70,11 +77,7 @@ class BookStateSerializerList(ModelSerializer):
         model = BookState
         fields = ['id', 'name'] 
         
-class PublisherSerializer(ModelSerializer):
-    
-    class Meta:
-        model = Publisher
-        fields = '__all__'
+
         
 
 class PublisherSerializerList(ModelSerializer):

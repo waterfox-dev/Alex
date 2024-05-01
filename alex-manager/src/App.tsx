@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 
 import BookList from './pages/BookList';
+import BookDetail from './pages/BookDetail';
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/books" element={<BookList/>}/>
+        <Route path="/books/:id" element={<BookDetail/>}/>
       </Routes>
     </Router>
   );

@@ -1,24 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Chip, Sheet } from "@mui/joy";
+import { Chip, Sheet, Button } from "@mui/joy";
 import Table from "@mui/joy/Table";
+
 
 import Author from "../types/author";
 import Availability from "../types/availability";
 import Shelf from "../types/shelf";
 import State from "../types/state";
 import Publisher from "../types/publisher";
-
-interface Book {
-  id: number;
-  isbn: string;
-  title: string;
-  authors: Author[];
-  shelf: Shelf;
-  state: State;
-  cover: string;
-  publisher: Publisher;
-  availability: Availability;
-}
+import Book from "../types/book";
+import { Link } from "react-router-dom";
 
 function BookList(){
 
@@ -38,36 +29,43 @@ function BookList(){
   }
 
   return (
-    <Sheet>
-      <Table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>ISBN</th>
-            <th>Title</th>
-            <th>Shelf</th>
-            <th>State</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((book) => (
-            <tr key={book.id}>
-              <td>{book.id}</td>
-              <td>{book.isbn}</td>
-              <td>{book.title}</td>
-              <td>{book.shelf.name}</td>
-              <td>{book.state.name}</td>
-              <td>
-                {book.availability.id == 1 ? 
-                  <Chip color="success">{book.availability.name}</Chip> : <Chip color="danger">{book.availability.name}</Chip>
-                }
-              </td>
+    <div>
+      <h1>Book List</h1>
+      <Sheet>
+        <Table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>ISBN</th>
+              <th>Title</th>
+              <th>Shelf</th>
+              <th>State</th>
+              <th>Status</th>
+              <th>Action</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
-    </Sheet>
+          </thead>
+          <tbody>
+            {data.map((book) => (
+              <tr key={book.id}>
+                <td>{book.id}</td>
+                <td>{book.isbn}</td>
+                <td>{book.title}</td>
+                <td>{book.shelf.name}</td>
+                <td>{book.state.name}</td>
+                <td>
+                  {book.availability.id == 1 ? 
+                    <Chip color="success">{book.availability.name}</Chip> : <Chip color="danger">{book.availability.name}</Chip>
+                  }
+                </td>
+                <td>
+                  <Link to={`/books/${book.id}`}><Button>Detail</Button></Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </Sheet>
+    </div>
   );
 }
 
