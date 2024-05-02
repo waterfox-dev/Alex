@@ -25,92 +25,91 @@ from server.serializer import PublisherSerializerList
 class AuthorViewSet(ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
-    
+
     def get_queryset(self):
         return Author.objects.filter(active=True)
-    
+
     def get_serializer_class(self):
-        
-        if self.action == 'list':
+        if self.action == "list":
             return AuthorSerializerList
-        
         return AuthorSerializer
-    
-    
+
+
 class ShelfViewSet(ModelViewSet):
-    
+
     queryset = Shelf.objects.all()
     serializer_class = ShelfSerializer
-    
+
     def get_queryset(self):
         return Shelf.objects.filter(active=True)
-    
+
     def get_serializer_class(self):
-        
-        if self.action == 'list':
+
+        if self.action == "list":
             return ShelfSerializerList
-        
-        return ShelfSerializer    
+
+        return ShelfSerializer
 
 
-    
 class BookStateViewSet(ModelViewSet):
-    
+
     queryset = BookState.objects.all()
     serializer_class = BookStateSerializer
-    
+
     def get_queryset(self):
         return BookState.objects.filter(active=True)
 
     def get_serializer_class(self):
-        
-        if self.action == 'list':
+
+        if self.action == "list":
             return BookStateSerializerList
-        
+
         return BookStateSerializer
 
+
 class BookAvailabilityViewSet(ModelViewSet):
-    
+
     queryset = BookAvailability.objects.all()
     serializer_class = BookAvailabilitySerializer
-    
+
     def get_queryset(self):
         return BookAvailability.objects.filter(active=True)
-    
+
     def get_serializer_class(self):
-        
-        if self.action == 'list':
+
+        if self.action == "list":
             return BookAvailabilitySerializerList
-        
+
         return BookAvailabilitySerializer
 
+
 class BookViewSet(ModelViewSet):
-    
+
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    
+
     def get_queryset(self):
         return Book.objects.filter(active=True)
-    
+
     def get_serializer_class(self):
-        
-        if self.action == 'list':
+
+        if self.action == "list":
             return BookSerializerList
-        
+
         return BookSerializer
 
+
 class PublisherViewSet(ModelViewSet):
-    
+
     queryset = Publisher.objects.all()
     serializer_class = PublisherSerializer
-    
+
     def get_queryset(self):
         return Publisher.objects.filter(active=True)
-    
-    def get_serializer_class(self):
-        
-        if self.action == 'list':
-            return PublisherSerializerList
-        
-        return PublisherSerializer
 
+    def get_serializer_class(self):
+
+        if self.action == "list":
+            return PublisherSerializerList
+
+        return PublisherSerializer

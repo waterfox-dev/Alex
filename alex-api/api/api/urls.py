@@ -3,8 +3,7 @@ from django.urls import path
 from django.urls.conf import include
 
 from rest_framework import routers
-from rest_framework import permissions 
- 
+
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
@@ -14,13 +13,10 @@ from server.viewset import PublisherViewSet
 from server.viewset import BookStateViewSet
 from server.viewset import BookAvailabilityViewSet
 from server.viewset import BookViewSet
-from server.viewset import BookViewSet
 
-
-schema_view = get_schema_view(
+SchemaView = get_schema_view(
     openapi.Info(
-        title="Alex API", 
-        default_version="v1", 
+        title="Alex API", default_version="v1", 
         description="Alex API is the main interface to interact with Alex database.",  
         license=openapi.License(name = "CC BY-NC-SA 4.0")
     )
@@ -38,8 +34,8 @@ router.register(r'books', BookViewSet, basename='book')
 
 urlpatterns = [
     path('admin/', admin.site.urls),   
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('swagger/', SchemaView.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', SchemaView.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('api-auth/', include('rest_framework.urls')),
     path('api/', include(router.urls)),
 
