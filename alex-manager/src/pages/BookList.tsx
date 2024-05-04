@@ -39,7 +39,7 @@ function BookList(){
               <th>ISBN</th>
               <th>Title</th>
               <th>Shelf</th>
-              <th>State</th>
+              <th>Author</th>
               <th>Status</th>
               <th>Action</th>
             </tr>
@@ -51,7 +51,7 @@ function BookList(){
                 <td>{book.isbn}</td>
                 <td>{book.title}</td>
                 <td>{book.shelf.name}</td>
-                <td>{book.state.name}</td>
+                <td>{book.authors.map((author) => author.name + " "  + author.first_name).join(', ')}</td>
                 <td>
                   {book.availability.id == 1 ? 
                     <Chip color="success">{book.availability.name}</Chip> : <Chip color="danger">{book.availability.name}</Chip>
