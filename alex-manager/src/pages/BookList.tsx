@@ -1,32 +1,23 @@
-import React, { useState, useEffect } from "react";
 import { Chip, Sheet, Button } from "@mui/joy";
 import Table from "@mui/joy/Table";
 
-
-import Author from "../types/author";
-import Availability from "../types/availability";
-import Shelf from "../types/shelf";
-import State from "../types/state";
-import Publisher from "../types/publisher";
 import Book from "../types/book";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
-function BookList(){
+function BookList() {
 
-  const [data, setData] = useState<Book[]>([]);
+  var { data, isLoading, isError } = useQuery({
+    queryKey: ['books'],
+    queryFn: () => fetch('http://localhost:8000/api/books').then(
+      res => res.json()
+    ),
+  });
 
-  useEffect(() => {
-    onLoad();
-  }, []);
-
-  function onLoad(){
-    fetch('http://localhost:8000/api/books')
-      .then(response => response.json())
-      .then((books: Book[]) => {
-        setData(books);
-      })
-      .catch(error => console.error('Error fetching books:', error));
-  }
+  data = data as Book[];
+  
+  if (isLoading) return <div>Loading...</div>
+  if (isError) return <div>Error...</div>
 
   return (
     <div>
@@ -45,15 +36,15 @@ function BookList(){
             </tr>
           </thead>
           <tbody>
-            {data.map((book) => (
+            {data.map((book: Book) => (
               <tr key={book.id}>
                 <td>{book.id}</td>
                 <td>{book.isbn}</td>
                 <td>{book.title}</td>
                 <td>{book.shelf.name}</td>
-                <td>{book.authors.map((author) => author.name + " "  + author.first_name).join(', ')}</td>
+                <td>{book.authors.map((author) => author.name + " " + author.first_name).join(', ')}</td>
                 <td>
-                  {book.availability.id == 1 ? 
+                  {book.availability.id === 1 ?
                     <Chip color="success">{book.availability.name}</Chip> : <Chip color="danger">{book.availability.name}</Chip>
                   }
                 </td>
@@ -70,3 +61,4 @@ function BookList(){
 }
 
 export default BookList;
+

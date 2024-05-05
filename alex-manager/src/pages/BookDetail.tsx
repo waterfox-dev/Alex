@@ -1,48 +1,45 @@
-import React, { useState, useEffect } from "react";
 
 import { useParams } from "react-router-dom";
 
 import { Chip, Sheet } from "@mui/joy";
 
 import Book from "../types/book";
+import { useQuery } from "@tanstack/react-query";
 
 
 function BookDetail(){
     const { id } = useParams();
+
+    const { data, isLoading, isError } = useQuery({
+        queryKey: ['book'],
+        queryFn: () => fetch(`http://localhost:8000/api/books/${id}`).then(
+          res => res.json()
+        ),
+    });
     
-    const [book, setBook] = useState<Book | null>(null);
+
+
+      if (isLoading) return <div>Loading...</div>
+      if (isError) return <div>Error...</div>
     
-    useEffect(() => {
-        onLoad();
-    }, []);
-    
-    function onLoad(){
-        console.log(id)
-        fetch(`http://localhost:8000/api/books/${id}`)
-        .then(response => response.json())
-        .then((book: Book) => {
-            setBook(book);
-        })
-        .catch(error => console.error('Error fetching book:', error));
-    }
     
     return (
         <div>
         <h1>Book</h1>
-        {book && (
+        {data as Book && (
             <Sheet>
-            <h2>{book.title}</h2>
-            <p>ISBN: {book.isbn}</p>
-            <p>Shelf: {book.shelf.name}</p>
-            <p>State: {book.state.name}</p>
-            <p>Publisher: {book.publisher.name}</p>
-            <p>Authors: {book.authors.map((author) => author.name + " "  + author.first_name).join(', ')}</p>
+            <h2>{data.title}</h2>
+            <p>ISBN: {data.isbn}</p>
+            <p>Shelf: {data.shelf.name}</p>
+            <p>State: {data.state.name}</p>
+            <p>Publisher: {data.publisher.name}</p>
+            <p>Authors: {data.authors.map((author: { name: string; first_name: string; }) => author.name + " "  + author.first_name).join(', ')}</p>
             <p>
-                Status: {book.availability.id === 1 ? 
-                <Chip color="success">{book.availability.name}</Chip> : <Chip color="danger">{book.availability.name}</Chip>
+                Status: {data.availability.id === 1 ? 
+                <Chip color="success">{data.availability.name}</Chip> : <Chip color="danger">{data.availability.name}</Chip>
                 }
             </p>
-            <img src={book.cover} alt={book.title} style={{maxWidth: '100%'}}/>
+            <img src={data.cover} alt={data.title} style={{maxWidth: '100%'}}/>
             </Sheet>
         )}
         </div>

@@ -8,24 +8,31 @@ import {
 
 import BookList from './pages/BookList';
 import BookDetail from './pages/BookDetail';
-import { Grid } from '@mui/joy';
+import MenuBar from './components/MenuBar';
 
+import { Grid } from '@mui/joy';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient()
 
 function App() {
   return (
-    <Grid container spacing={2} sx={{ flexGrow: 1 }}>
-      <Grid xs={2}>
-      <p>Menubar</p>
+    <Router>
+      <QueryClientProvider client={queryClient}>
+      <Grid container spacing={2} sx={{ flexGrow: 1 }}>
+        <Grid xs={2}>
+          <MenuBar />
+        </Grid>
+        <Grid xs={9}>
+          <Routes>
+            <Route path="/books" element={<BookList />} />
+            <Route path="/books/:id" element={<BookDetail />} />
+          </Routes>
+        </Grid>
       </Grid>
-      <Grid xs={9}>
-      <Router>
-        <Routes>
-          <Route path="/books" element={<BookList/>}/>
-          <Route path="/books/:id" element={<BookDetail/>}/>
-        </Routes>
-      </Router>
-      </Grid>
-    </Grid>
+      </QueryClientProvider>
+    </Router>
+
   );
 }
 
