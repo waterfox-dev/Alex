@@ -206,15 +206,16 @@ class Loan(Model):
             return False
 
     @staticmethod 
-    def return_book(token:str, book_id:int):
+    def return_book(book_id:int):
         try:
             book = Book.objects.get(id=book_id)
-            loan = LoanToken.objects.get(token=token)
-            loan = Loan.objects.get(book=book, token=loan)
-            book.availability = "AVA"
-            book.save()
-            loan.delete()
-            return True
+            loan = Loan.objects.get(book=book, active=True)
+            if book.availability == "LOA":
+                book.availability = "AVA"
+                book.save()
+                loan.active = False
+                return True
+            return False
         except Book.DoesNotExist:
             return False
         except LoanToken.DoesNotExist:
