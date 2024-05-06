@@ -1,7 +1,15 @@
 from server.models import User
 from server.models import LoanToken
+from server.models import Loan
+from server.models import Book
+from server.models import Shelf
+from server.models import BookState
+from server.models import Publisher
+from server.models import Author
 
 from unittest import TestCase 
+
+from datetime import datetime
 
 import hashlib
 
@@ -10,14 +18,60 @@ class TestLoanToken(TestCase):
     
     def setUp(self) -> None:
         User.objects.all().delete()
-        user = User(
+        Book.objects.all().delete()
+        Shelf.objects.all().delete()
+        LoanToken.objects.all().delete()
+        Loan.objects.all().delete()
+        BookState.objects.all().delete()
+        Publisher.objects.all().delete()
+        Author.objects.all().delete()
+        
+        self.user = User(
             username='testuser', 
             email='testuser@gmail.com',
             password='12345', 
             first_name='Test',
             last_name='User'
-        )       
-        user.save()
+        )     
+        self.user.save()  
+        
+        self.shelf = Shelf(
+            name='Test Shelf'
+        )
+        self.shelf.save()
+        
+        self.state = BookState(
+            name='New'
+        )
+        self.state.save()
+        
+
+        
+        self.publisher = Publisher(
+            name='Test Publisher'
+        )   
+        self.publisher.save() 
+        
+        self.author = Author(
+            name='Author', 
+            first_name='Test',  
+        )
+        self.author.save()
+        
+        
+        self.book = Book(
+            isbn=1234567890123,
+            title='Test Book',
+            shelf=self.shelf,
+            state=self.state,
+            availability='AVA',
+            editions=1,
+            publisher=self.publisher,
+            published_date=datetime.now(),
+        )
+        self.book.save()
+        self.book.authors.add(self.author)
+        
         return super().setUp()
     
     def test_get_token(self): 
@@ -37,3 +91,18 @@ class TestLoanToken(TestCase):
             'testuser@gmail.com', 
             hashlib.sha256('1234'.encode()).hexdigest()
         ))
+
+    def test_get_token_wrong_email_and_password(self): 
+        self.assertIsNone(LoanToken.create_token(
+            'test@gmail.com', 
+            hashlib.sha256('1234'.encode()).hexdigest()
+        ))
+        
+    def test_loan(self):
+        token = LoanToken.create_token(
+            'testuser@gmail.com', 
+            hashlib.sha256('12345'.encode()).hexdigest()
+        )
+        self.assertTrue(Loan.loan(token, self.book.id))
+        self.assertTrue(Loan.objects.filter(book=self.book).exists())
+                

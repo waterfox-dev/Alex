@@ -11,7 +11,6 @@ from server.viewset import AuthorViewSet
 from server.viewset import ShelfViewSet
 from server.viewset import PublisherViewSet
 from server.viewset import BookStateViewSet
-from server.viewset import BookAvailabilityViewSet
 from server.viewset import BookViewSet
 
 SchemaView = get_schema_view(
@@ -28,7 +27,6 @@ router.register(r'authors', AuthorViewSet, basename='author')
 router.register(r'shelves', ShelfViewSet, basename='shelf')
 router.register(r'editions', PublisherViewSet, basename='edition')
 router.register(r'bookstates', BookStateViewSet, basename='bookstate')
-router.register(r'bookavailabilities', BookAvailabilityViewSet, basename='bookavailability')
 router.register(r'books', BookViewSet, basename='book')
 
 

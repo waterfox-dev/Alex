@@ -59,23 +59,6 @@ class Shelf(Model):
     def __str__(self):
         return f'[{self.id}]-{self.name}'
     
-
-class BookAvailability(Model): 
-    
-    class Meta:
-        db_table = f'{DATABASE_TABLE_PREFIX}_book_availability'
-    
-    id = AutoField(primary_key=True)
-    
-    name = CharField(max_length=255) 
-        
-    created_at = DateTimeField(auto_now_add=True)
-    updated_at = DateTimeField(auto_now=True) 
-    active =  BooleanField(default=True)
-    
-    def __str__(self):
-        return f'[{self.id}]-{self.name}'
-
 class BookState(Model):
         
     class Meta:
@@ -211,8 +194,8 @@ class Loan(Model):
         try:
             book = Book.objects.get(id=book_id)
             loan = LoanToken.objects.get(token=token)
-            if book.availability == 1:
-                book.availability = 2
+            if book.availability == "AVA":
+                book.availability = "LOA"
                 book.save()
                 Loan.objects.create(book=book, token=loan)
                 return True
@@ -228,7 +211,7 @@ class Loan(Model):
             book = Book.objects.get(id=book_id)
             loan = LoanToken.objects.get(token=token)
             loan = Loan.objects.get(book=book, token=loan)
-            book.availability = 1
+            book.availability = "AVA"
             book.save()
             loan.delete()
             return True
@@ -288,7 +271,13 @@ class Book(Model):
     title = CharField(max_length=255) 
     authors = ManyToManyField('Author', related_name='books')
     shelf = ForeignKey('Shelf', related_name='books', on_delete=CASCADE)
-    availability = ForeignKey(BookAvailability, related_name='books', on_delete=CASCADE)
+    availability = CharField(max_length=255, default='Available', choices=[
+        ('AVA', 'Available'), 
+        ('LOA', 'Loaned'), 
+        ('RES', 'Reserved'), 
+        ('LOS', 'Lost'), 
+        ('STO', 'In Storage')
+    ])
     state = ForeignKey(BookState, related_name='books', on_delete=CASCADE)
     published_date = DateField(null=True, blank=True)
     editions = IntegerField(default=1) 
