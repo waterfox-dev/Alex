@@ -28,4 +28,4 @@ jobs:
     - name: Run Tests
       run: |
         cd alex-api/api
-        python manage.py server/test
+        python manage.py test server/test
