@@ -60,7 +60,7 @@ class AuthorSerializerList(ModelSerializer):
     
     class Meta:
         model = Author
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'first_name']
         
 
 class ShelfSerializerList(ModelSerializer):
