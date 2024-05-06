@@ -28,4 +28,5 @@ jobs:
     - name: Run Tests
       run: |
         cd alex-api/api
+        python manage.py migrate
         python manage.py test server/test
