@@ -117,7 +117,7 @@ class User(Model):
     id = AutoField(primary_key=True)
     
     username = CharField(max_length=255)
-    email = CharField(max_length=255)
+    email = CharField(max_length=255, unique=True)
     password = CharField(max_length=255)
     
     first_name = CharField(max_length=255)
@@ -134,11 +134,11 @@ class User(Model):
         return f'[{self.id}]-{self.username} ({self.email})'
     
     def save(self, *args, **kwargs):
-        self.password = hashlib.sha256(self.password.encode())
+        self.password = hashlib.sha256(self.password.encode()).hexdigest()
         super(User, self).save(*args, **kwargs)
     
     @staticmethod 
-    def check_password(id: int, password:str):
+    def check_password(id: int, password):
         try:
             user = User.objects.get(id=id)
             return password == user.password
@@ -178,8 +178,9 @@ class LoanToken(Model):
     def create_token(mail: str, password: str) -> str:
         try:
             user = User.objects.get(email=mail)
+            
             if User.check_password(user.id, password):
-                token = hashlib.sha256(f'{mail}-{password}-{datetime.now()}-{random.randint(1, )}'.encode())
+                token = hashlib.sha256(f'{mail}-{password}-{datetime.now()}-{random.randint(1, 1024)}'.encode()).hexdigest()
                 LoanToken.objects.create(token=token, user=user)
                 return token
             return None
