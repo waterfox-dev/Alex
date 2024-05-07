@@ -44,9 +44,7 @@ class TestLoanToken(TestCase):
             name='New'
         )
         self.state.save()
-        
-
-        
+             
         self.publisher = Publisher(
             name='Test Publisher'
         )   
@@ -77,7 +75,7 @@ class TestLoanToken(TestCase):
     def test_get_token(self): 
         self.assertIsNotNone(LoanToken.create_token(
             'testuser@gmail.com', 
-            hashlib.sha256('12345'.encode()).hexdigest()
+            '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5'
         ))    
         
     def test_get_token_wrong_email(self): 
