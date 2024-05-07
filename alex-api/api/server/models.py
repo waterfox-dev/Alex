@@ -190,10 +190,11 @@ class User(Model):
     first_name = CharField(max_length=255, help_text="User's first name.")
     last_name = CharField(max_length=255, help_text="User's last name.")
     is_staff = BooleanField(default=False, help_text="Indicates whether the user is a staff member.")
-    is_active = BooleanField(default=True, help_text="Indicates whether the user account is active.")
     is_superuser = BooleanField(default=False, help_text="Indicates whether the user has superuser privileges.")
     last_login = DateTimeField(auto_now=True, help_text="Timestamp of the user's last login.")
     date_joined = DateTimeField(auto_now_add=True, help_text="Timestamp indicating when the user account was created.")
+
+    active = BooleanField(default=True, help_text="Indicates whether the user account is active.")
 
     def __str__(self):
         """
@@ -388,13 +389,13 @@ class Loan(Model):
             return []
         
     @staticmethod 
-    def get_loans_by_user(user_id:int) -> Iterable['Loan']:
+    def get_loans_by_user(user_id:int, active:bool=True) -> Iterable['Loan']:
         """
         Static method to get all loans associated with a user.
         """
         try:
             user = User.objects.get(id=user_id)
-            return Loan.objects.filter(token__user=user)
+            return Loan.objects.filter(token__user=user, active=active)
         except User.DoesNotExist:
             return []
         
@@ -444,7 +445,7 @@ class Book(Model):
 
     id = AutoField(primary_key=True, help_text="Unique identifier for the book.")
     
-    isbn = BigIntegerField(help_text="International Standard Book Number (ISBN) of the book.")
+    isbn = CharField(max_length=20, help_text="International Standard Book Number (ISBN) of the book.")
     title = CharField(max_length=255, help_text="Title of the book.")
     authors = ManyToManyField('Author', related_name='books', help_text="Authors associated with the book.")
     shelf = ForeignKey('Shelf', related_name='books', on_delete=CASCADE, help_text="Shelf where the book is located.")

@@ -12,6 +12,7 @@ from server.viewset import ShelfViewSet
 from server.viewset import PublisherViewSet
 from server.viewset import BookStateViewSet
 from server.viewset import BookViewSet
+from server.viewset import UserViewSet
 
 SchemaView = get_schema_view(
     openapi.Info(
@@ -28,6 +29,7 @@ router.register(r'shelves', ShelfViewSet, basename='shelf')
 router.register(r'editions', PublisherViewSet, basename='edition')
 router.register(r'bookstates', BookStateViewSet, basename='bookstate')
 router.register(r'books', BookViewSet, basename='book')
+router.register(r'users', UserViewSet, basename='user')
 
 
 urlpatterns = [

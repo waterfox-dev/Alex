@@ -1,10 +1,13 @@
 from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import SerializerMethodField
 
 from server.models import Book
 from server.models import Author
 from server.models import Shelf
 from server.models import Publisher
 from server.models import BookState
+from server.models import User
+from server.models import Loan
 
 
 class AuthorSerializer(ModelSerializer):
@@ -92,4 +95,23 @@ class BookSerializerList(ModelSerializer):
     class Meta:
         model = Book
         fields = ['id', 'isbn', 'title', 'authors', 'shelf', 'editions', 'state', 'cover', 'publisher', 'availability']
+
+
+class UserSerializer(ModelSerializer):
+    
+    loans = SerializerMethodField()
+
+    def get_loans(self, obj: User):
+        loans = Loan.get_loans_by_user(obj.id)
+        return BookSerializerList(loans, many=True).data
+    
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'loans']
         
+
+class UserSerializerList(ModelSerializer):
+    
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name']

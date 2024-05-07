@@ -5,18 +5,21 @@ from server.models import Author
 from server.models import Shelf
 from server.models import Publisher
 from server.models import BookState
+from server.models import User
 
 from server.serializer import BookSerializer
 from server.serializer import AuthorSerializer
 from server.serializer import ShelfSerializer
 from server.serializer import BookStateSerializer
 from server.serializer import PublisherSerializer
+from server.serializer import UserSerializer
 
 from server.serializer import AuthorSerializerList
 from server.serializer import BookSerializerList
 from server.serializer import ShelfSerializerList
 from server.serializer import BookStateSerializerList
 from server.serializer import PublisherSerializerList
+from server.serializer import UserSerializerList
 
 
 class AuthorViewSet(ModelViewSet):
@@ -94,3 +97,19 @@ class PublisherViewSet(ModelViewSet):
             return PublisherSerializerList
 
         return PublisherSerializer
+
+
+class UserViewSet(ModelViewSet):
+
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def get_queryset(self):
+        return User.objects.filter(active=True)
+
+    def get_serializer_class(self):
+
+        if self.action == "list":
+            return UserSerializerList
+
+        return UserSerializer
