@@ -7,7 +7,7 @@ from server.models import BookState
 from server.models import Publisher
 from server.models import Author
 
-from unittest import TestCase 
+from django.test import TestCase 
 
 from datetime import datetime
 
