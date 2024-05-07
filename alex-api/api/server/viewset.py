@@ -1,4 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.request import Request
 
 from server.models import Book
 from server.models import Author
@@ -6,6 +9,7 @@ from server.models import Shelf
 from server.models import Publisher
 from server.models import BookState
 from server.models import User
+from server.models import LoanToken
 
 from server.serializer import BookSerializer
 from server.serializer import AuthorSerializer
@@ -20,6 +24,7 @@ from server.serializer import ShelfSerializerList
 from server.serializer import BookStateSerializerList
 from server.serializer import PublisherSerializerList
 from server.serializer import UserSerializerList
+
 
 
 class AuthorViewSet(ModelViewSet):
@@ -113,3 +118,15 @@ class UserViewSet(ModelViewSet):
             return UserSerializerList
 
         return UserSerializer
+    
+    @action(detail=False, methods=['POST'])
+    def get_loan_token(self, request: Request):
+   
+        return Response(data = {
+            "token" : LoanToken.create_token(
+                request.data['mail'],  
+                request.data['password']
+            )}
+        )
+        
+        
