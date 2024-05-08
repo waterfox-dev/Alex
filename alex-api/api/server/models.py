@@ -282,7 +282,7 @@ class LoanToken(Model):
             
             if User.check_password(user.id, password):
                 token = hashlib.sha256(f'{mail}-{password}-{datetime.now()}-{random.randint(1, 1024)}'.encode()).hexdigest()
-                LoanToken.objects.create(token=token, user=user)
+                token = LoanToken.objects.create(token=token, user=user)
                 return token
             return None
         

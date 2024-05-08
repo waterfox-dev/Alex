@@ -8,7 +8,7 @@ from server.models import Publisher
 from server.models import BookState
 from server.models import User
 from server.models import Loan
-
+from server.models import LoanToken
 
 class AuthorSerializer(ModelSerializer):
         
@@ -115,3 +115,10 @@ class UserSerializerList(ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'first_name', 'last_name']
+        
+        
+class LoanTokenSerializer(ModelSerializer):
+    
+    class Meta:
+        model = LoanToken
+        fields = '__all__'

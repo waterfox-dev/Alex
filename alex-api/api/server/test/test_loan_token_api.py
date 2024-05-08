@@ -98,8 +98,7 @@ class TestLoanTokenApi(APITestCase):
             }
         )
         
-        self.assertEqual(response.status_code,200)
-        self.assertIsNone(response.data['token'])
+        self.assertEqual(response.status_code,401)
         
     def test_get_token_wrong_email(self):
         response = self.client.post(
@@ -110,8 +109,9 @@ class TestLoanTokenApi(APITestCase):
             }
         )
         
-        self.assertEqual(response.status_code,200)
-        self.assertIsNone(response.data['token'])
+        self.assertEqual(response.status_code,401)
+
+
     
     def test_get_token_wrong_email_and_password(self):
         response = self.client.post(
@@ -122,5 +122,4 @@ class TestLoanTokenApi(APITestCase):
             }
         )
         
-        self.assertEqual(response.status_code,200)
-        self.assertIsNone(response.data['token'])
+        self.assertEqual(response.status_code,401)

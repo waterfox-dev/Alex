@@ -102,7 +102,7 @@ class TestLoanToken(TestCase):
             'testuser@gmail.com', 
             hashlib.sha256('12345'.encode()).hexdigest()
         )
-        self.assertTrue(Loan.loan(token, self.book.id))
+        self.assertTrue(Loan.loan(token.token, self.book.id))
         self.assertTrue(Loan.objects.filter(book=self.book).exists())
                 
     def test_loan_not_available(self):
@@ -112,7 +112,7 @@ class TestLoanToken(TestCase):
         )
         self.book.availability = 'LOA'
         self.book.save()
-        self.assertFalse(Loan.loan(token, self.book.id))
+        self.assertFalse(Loan.loan(token.token, self.book.id))
         self.assertFalse(Loan.objects.filter(book=self.book).exists())
         
     def test_loan_wrong_book(self): 
@@ -120,7 +120,7 @@ class TestLoanToken(TestCase):
             'testuser@gmail.com', 
             hashlib.sha256('12345'.encode()).hexdigest()
         )
-        self.assertFalse(Loan.loan(token, 2))
+        self.assertFalse(Loan.loan(token.token, 2))
         self.assertFalse(Loan.objects.filter(book=self.book).exists())
     
     def test_loan_wrong_token(self):    
@@ -133,7 +133,7 @@ class TestLoanToken(TestCase):
             'testuser@gmail.com', 
             hashlib.sha256('12345'.encode()).hexdigest()
         )
-        Loan.loan(token, self.book.id)
+        Loan.loan(token.token, self.book.id)
         self.assertTrue(Loan.return_book(self.book.id))
             
     def test_token_expired(self):
@@ -141,7 +141,7 @@ class TestLoanToken(TestCase):
             'testuser@gmail.com',  
             hashlib.sha256('12345'.encode()).hexdigest()
         )
-        token = LoanToken.objects.get(token=token)
+        token = LoanToken.objects.get(token=token.token)
         token.lifetime = 1
         token.save()
         time.sleep(1)
