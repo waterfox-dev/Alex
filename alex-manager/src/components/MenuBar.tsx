@@ -1,33 +1,47 @@
 import React from "react";
-import {Divider, List, ListItem, ListItemButton, ListItemContent } from "@mui/joy";
+import { Divider, List, ListItem, ListItemButton, ListItemContent } from "@mui/joy";
 import { Link } from "react-router-dom";
+
+import { HiHome } from "react-icons/hi";
+import { HiOutlineBookOpen } from "react-icons/hi";
+import { HiOutlineCollection } from "react-icons/hi";
+import { HiOutlineUsers } from "react-icons/hi";
+import { HiOutlineUser } from "react-icons/hi";
 
 function MenuBar() {
   return (
     <List>
       <Link to="/" style={{ textDecoration: 'none', textDecorationColor: 'none' }}>
-      <ListItem variant="soft">
+        <ListItem variant="plain">
           <ListItemButton>
-            <ListItemContent>Home</ListItemContent>
+            <ListItemContent><HiHome /> Home</ListItemContent>
           </ListItemButton>
-      </ListItem>
+        </ListItem>
       </Link>
       <Divider />
       <Link to="/books" style={{ textDecoration: 'none', textDecorationColor: 'none' }}>
-        <ListItem variant="soft">
-            <ListItemButton>
-              <ListItemContent>Books</ListItemContent>
-            </ListItemButton>
+        <ListItem variant="plain">
+          <ListItemButton>
+            <ListItemContent><HiOutlineBookOpen /> Books</ListItemContent>
+          </ListItemButton>
         </ListItem>
       </Link>
-      <ListItem variant="soft">
+      <Link to="/shelves" style={{ textDecoration: 'none', textDecorationColor: 'none' }}>
+        <ListItem variant="plain">
+          <ListItemButton>
+            <ListItemContent><HiOutlineCollection /> Shelves</ListItemContent>
+          </ListItemButton>
+        </ListItem>
+      </Link>
+      <ListItem variant="plain">
         <ListItemButton>
-          <ListItemContent>Shelves</ListItemContent>
+          <ListItemContent><HiOutlineUsers /> Author</ListItemContent>
         </ListItemButton>
       </ListItem>
-      <ListItem variant="soft">
+      <Divider />
+      <ListItem variant="plain">
         <ListItemButton>
-          <ListItemContent>Author</ListItemContent>
+          <ListItemContent><HiOutlineUser /> User</ListItemContent>
         </ListItemButton>
       </ListItem>
     </List>

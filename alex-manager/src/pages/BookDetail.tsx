@@ -1,8 +1,9 @@
 import { useParams } from "react-router-dom";
-import { Chip, Sheet } from "@mui/joy";
+import { Chip, CircularProgress, Sheet } from "@mui/joy";
 import Book from "../types/book";
 import { useQuery } from "@tanstack/react-query";
 import BookChip from "../components/BookChip";
+import ConnectionErrorModal from "../components/ConnectionErrorModal";
 
 function BookDetail() {
     const { id } = useParams();
@@ -12,9 +13,8 @@ function BookDetail() {
         queryFn: () => fetch(`http://localhost:8000/api/books/${id}`).then(res => res.json()),
     });
 
-    if (isLoading) return <div>Loading...</div>
-    if (isError) return <div>Error...</div>
-
+    if (isLoading) return <CircularProgress value={10}/>
+    if (isError) return <ConnectionErrorModal />
     return (
         <div>
             <h1>{data.title}</h1>

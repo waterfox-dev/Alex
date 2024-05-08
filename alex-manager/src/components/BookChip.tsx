@@ -3,7 +3,10 @@ import { Badge } from "@mui/joy";
 
 import React from "react";
 
-
+/**
+ * @param availability The availability of the book
+ * @returns The corresponding chip
+ */
 function BookChip({availability}: {availability: string}) {
 
     switch (availability) {

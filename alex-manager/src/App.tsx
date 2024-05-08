@@ -8,6 +8,7 @@ import {
 
 import BookList from './pages/BookList';
 import BookDetail from './pages/BookDetail';
+import ShelvesList from './pages/ShelvesList';
 import MenuBar from './components/MenuBar';
 
 import { Grid } from '@mui/joy';
@@ -19,7 +20,7 @@ function App() {
   return (
     <Router>
       <QueryClientProvider client={queryClient}>
-      <Grid container spacing={2} sx={{ flexGrow: 1 }}>
+      <Grid container  sx={{ flexGrow: 1 }}>
         <Grid xs={2}>
           <MenuBar />
         </Grid>
@@ -27,6 +28,7 @@ function App() {
           <Routes>
             <Route path="/books" element={<BookList />} />
             <Route path="/books/:id" element={<BookDetail />} />
+            <Route path="/shelves" element={<ShelvesList/>} />
           </Routes>
         </Grid>
       </Grid>
