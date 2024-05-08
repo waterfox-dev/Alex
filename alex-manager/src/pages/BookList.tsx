@@ -5,6 +5,7 @@ import Book from "../types/book";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import BookBadge from "../components/BookChip";
 
 function BookList() {
 
@@ -79,9 +80,7 @@ function BookList() {
                 <td>{book.shelf.name}</td>
                 <td>{book.authors.map((author) => author.name + " " + author.first_name).join(', ')}</td>
                 <td>
-                  {book.availability.id === 1 ?
-                    <Chip color="success">{book.availability.name}</Chip> : <Chip color="danger">{book.availability.name}</Chip>
-                  }
+                  <BookBadge availability={book.availability} />
                 </td>
                 <td>
                   <Link to={`/books/${book.id}`}><Button>Detail</Button></Link>

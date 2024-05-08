@@ -1,5 +1,4 @@
 import Author from './author';
-import Availability from './availability';
 import Shelf from './shelf';
 import State from './state';
 import Publisher from './publisher';
@@ -13,7 +12,7 @@ interface Book {
   state: State;
   cover: string;
   publisher: Publisher;
-  availability: Availability;
+  availability: string;
 }
 
 export default Book;

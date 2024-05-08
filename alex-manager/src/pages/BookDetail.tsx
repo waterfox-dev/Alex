@@ -1,47 +1,34 @@
-
 import { useParams } from "react-router-dom";
-
 import { Chip, Sheet } from "@mui/joy";
-
 import Book from "../types/book";
 import { useQuery } from "@tanstack/react-query";
+import BookChip from "../components/BookChip";
 
-
-function BookDetail(){
+function BookDetail() {
     const { id } = useParams();
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ['book'],
-        queryFn: () => fetch(`http://localhost:8000/api/books/${id}`).then(
-          res => res.json()
-        ),
+        queryFn: () => fetch(`http://localhost:8000/api/books/${id}`).then(res => res.json()),
     });
-    
 
+    if (isLoading) return <div>Loading...</div>
+    if (isError) return <div>Error...</div>
 
-      if (isLoading) return <div>Loading...</div>
-      if (isError) return <div>Error...</div>
-    
-    
     return (
         <div>
-        <h1>Book</h1>
-        {data as Book && (
-            <Sheet>
-            <h2>{data.title}</h2>
-            <p>ISBN: {data.isbn}</p>
-            <p>Shelf: {data.shelf.name}</p>
-            <p>State: {data.state.name}</p>
-            <p>Publisher: {data.publisher.name}</p>
-            <p>Authors: {data.authors.map((author: { name: string; first_name: string; }) => author.name + " "  + author.first_name).join(', ')}</p>
-            <p>
-                Status: {data.availability.id === 1 ? 
-                <Chip color="success">{data.availability.name}</Chip> : <Chip color="danger">{data.availability.name}</Chip>
-                }
-            </p>
-            <img src={data.cover} alt={data.title} style={{maxWidth: '100%'}}/>
-            </Sheet>
-        )}
+            <h1>{data.title}</h1>
+            {data as Book && (
+                <Sheet>
+                    <p>ISBN: {data.isbn}</p>
+                    <p>Shelf: {data.shelf.name}</p>
+                    <p>State: {data.state.name}</p>
+                    <p>Publisher: {data.publisher.name}</p>
+                    <p>Authors: {data.authors.map((author: { name: string; first_name: string; }) => author.name + " " + author.first_name).join(', ')}</p>
+                    <p>Availability: <BookChip availability={data.availability} /></p>
+                    <img src={data.cover} alt={data.title} style={{ maxWidth: '100%' }} />
+                </Sheet>
+            )}
         </div>
     );
 }
