@@ -127,6 +127,5 @@ class UserViewSet(ModelViewSet):
                 request.data['mail'],  
                 request.data['password']
             )}
-        )
-        
+        )    
         

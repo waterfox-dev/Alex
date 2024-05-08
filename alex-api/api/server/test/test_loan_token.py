@@ -12,6 +12,7 @@ from django.test import TestCase
 from datetime import datetime
 
 import hashlib
+import time
 
 
 class TestLoanToken(TestCase): 
@@ -135,3 +136,13 @@ class TestLoanToken(TestCase):
         Loan.loan(token, self.book.id)
         self.assertTrue(Loan.return_book(self.book.id))
             
+    def test_token_expired(self):
+        token = LoanToken.create_token(
+            'testuser@gmail.com',  
+            hashlib.sha256('12345'.encode()).hexdigest()
+        )
+        token = LoanToken.objects.get(token=token)
+        token.lifetime = 1
+        token.save()
+        time.sleep(1)
+        self.assertFalse(LoanToken.check_token(token.token))

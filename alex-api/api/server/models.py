@@ -1,4 +1,5 @@
 from typing import Iterable
+
 from django.db.models import Model 
 
 from django.db.models import CharField 
@@ -16,13 +17,15 @@ from django.db.models import CASCADE
 from django.db.models import ForeignKey
 from django.db.models import ManyToManyField   
 
-from datetime import timedelta
-from datetime import datetime
+from django.utils.timezone import datetime
+from django.utils.timezone import timedelta 
+from django.utils.timezone import now
 
 from api.settings import DATABASE_TABLE_PREFIX
 
 import hashlib
 import random
+import pytz
 
 
 class Author(Model):
@@ -248,7 +251,7 @@ class LoanToken(Model):
     
     created_at = DateTimeField(auto_now_add=True, help_text="Timestamp indicating when the loan token was created.")
     updated_at = DateTimeField(auto_now=True, help_text="Timestamp indicating when the loan token was last updated.") 
-    lifetime = IntegerField(default=7, help_text="Duration in days for which the token is valid.")
+    lifetime = IntegerField(default=15*60, help_text="Duration in second for which the token is valid.")
     
     def __str__(self):
         """
@@ -263,7 +266,7 @@ class LoanToken(Model):
         """
         try:
             loan = LoanToken.objects.get(token=token)
-            if loan.created_at + timedelta(days=loan.lifetime) > datetime.now():
+            if loan.created_at + timedelta(seconds=loan.lifetime) > now():
                 return True
             return False
         except LoanToken.DoesNotExist:
