@@ -91,6 +91,16 @@ class BookViewSet(ModelViewSet):
             return BookSerializerList
 
         return BookSerializer
+    
+    @action(detail=True, methods=['POST'])
+    def loan(self, request: Request, pk=None):
+        book = Book.objects.get(pk=pk)
+        token = request.data.get('token')
+        if token is None:
+            return Response({'error': 'Token is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        if book.loan(token):
+            return Response({'message': 'Book loaned successfully.'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Book loan failed.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PublisherViewSet(ModelViewSet):

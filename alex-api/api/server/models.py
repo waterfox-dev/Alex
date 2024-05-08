@@ -16,6 +16,7 @@ from django.db.models import CASCADE
   
 from django.db.models import ForeignKey
 from django.db.models import ManyToManyField   
+from django.forms import ValidationError
 
 from django.utils.timezone import datetime
 from django.utils.timezone import timedelta 
@@ -25,7 +26,6 @@ from api.settings import DATABASE_TABLE_PREFIX
 
 import hashlib
 import random
-import pytz
 
 
 class Author(Model):
@@ -60,7 +60,6 @@ class Author(Model):
         Returns a formatted string containing the author's ID, first name, and last name.
         """
         return f'[{self.id}]-{self.first_name} {self.name}'
-    
 
 
 class Shelf(Model):
@@ -223,6 +222,12 @@ class User(Model):
         except User.DoesNotExist:
             return False
         
+    def get_loans(self):
+        """
+        Method to get all loans associated with a user.
+        """
+        return Loan.objects.filter(token__user=self, active=True)
+        
 
 class LoanToken(Model):
     """
@@ -310,10 +315,11 @@ class Loan(Model):
     - get_loans_by_user: Static method to get all loans associated with a user.
     - get_loan: Static method to get a specific loan by token and book ID.
     """
-
+       
+    
     class Meta:
         db_table = f'{DATABASE_TABLE_PREFIX}_loan'
-
+    
     id = AutoField(primary_key=True, help_text="Unique identifier for the loan.")
     
     book = ForeignKey('Book', related_name='loans', on_delete=CASCADE, help_text="Book associated with the loan.")
@@ -327,25 +333,35 @@ class Loan(Model):
         """
         Returns a formatted string containing the loan's ID, book title, and loan token.
         """
-        return f'[{self.id}]-{self.book.title} ({self.token.token})'
-    
+        return f'{self.token.user} loans {self.book}'
+
+    def clean(self) -> None:
+        if self.book.availability != "AVA":
+            raise ValidationError("Book is not available.")
+        if not LoanToken.check_token(self.token):
+            raise ValidationError("Token is not valid.")
+        super().clean()     
+
     @staticmethod 
     def loan(token:str, book_id:int):
         """
         Static method to create a new loan for a book using a token.
         """
+        print(f'Try to loan book {book_id} with token {token}')
         try:
-            book = Book.objects.get(id=book_id)
+            book = Book.objects.get(id=int(book_id))
             loan = LoanToken.objects.get(token=token)
-            if book.availability == "AVA":
+            if book.availability == "AVA" and LoanToken.check_token(token):
                 book.availability = "LOA"
                 book.save()
                 Loan.objects.create(book=book, token=loan)
                 return True
             return False
         except Book.DoesNotExist:
+            print("Book does not exist")
             return False
         except LoanToken.DoesNotExist:
+            print("Token does not exist")
             return False
 
     @staticmethod 
@@ -475,8 +491,19 @@ class Book(Model):
         """
         return f'[{self.id}]-{self.title} ({self.isbn})'
      
+    def clean(self) -> None:
+        if self.availability == "AVA" and self.get_loan(active=True).count() > 0:
+            raise ValidationError("Book is actually loaned. You need to return it before to make it available.")
+        super().clean()
+     
     def loan(self, token:str):
         """
         Method to create a new loan for the book using a token.
         """
         return Loan.loan(token, self.id)
+    
+    def get_loan(self, active:bool=False) -> Iterable[Loan]:
+        """
+        Method to get the loan associated with the book.
+        """
+        return Loan.objects.filter(book=self, active=active)
