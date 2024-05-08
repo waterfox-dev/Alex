@@ -3,6 +3,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.request import Request
 
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg.openapi import Parameter
+from drf_yasg.openapi import IN_QUERY
+from drf_yasg.openapi import TYPE_STRING
+
 from server.models import Book
 from server.models import Author
 from server.models import Shelf
@@ -108,6 +113,8 @@ class UserViewSet(ModelViewSet):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    mail_parameter = Parameter('mail', IN_QUERY, description="The mail of the user", type=TYPE_STRING)
+    password_parameter = Parameter('password', IN_QUERY, description="The password of the user", type=TYPE_STRING)
 
     def get_queryset(self):
         return User.objects.filter(active=True)
@@ -119,6 +126,11 @@ class UserViewSet(ModelViewSet):
 
         return UserSerializer
     
+    @swagger_auto_schema(method='post', 
+                        operation_description="Get a loan token with user mail and sha-256 password",
+                        manual_parameters=[mail_parameter, password_parameter], 
+                        responses={200: 'Token created'}, 
+                        request_body=None)
     @action(detail=False, methods=['POST'])
     def get_loan_token(self, request: Request):
    
