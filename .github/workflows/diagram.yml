@@ -16,6 +16,10 @@ jobs:
               python-version: [3.11]
     
         steps:
+        - name: Check if triggered by bot
+          if: github.actor == 'github-actions[bot]'
+          run: exit 0
+          
         - uses: actions/checkout@v4
         - name: Set up Python ${{ matrix.python-version }}
           uses: actions/setup-python@v3
@@ -36,6 +40,6 @@ jobs:
           run: |
             git config --global user.email "github-actions[bot]@users.noreply.github.com"
             git config --global user.name "github-actions[bot]"
-            git add doc/diagram/alex_database.png
+            git add alex-api/doc/diagram/alex_database.png
             git commit -m "🤖 feat(API): Generate Django Database Diagram"
             git push
