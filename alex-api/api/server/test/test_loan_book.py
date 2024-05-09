@@ -6,17 +6,18 @@ from server.models import Shelf
 from server.models import BookState
 from server.models import Publisher
 from server.models import Author
+from server.models import Reservation
 
-from rest_framework.test import APITestCase
+from django.test import TestCase 
 
 from datetime import datetime
 
 import hashlib
+import time
 
 
-class TestLoanTokenApi(APITestCase):
+class TestLoanToken(TestCase): 
     
-
     def setUp(self) -> None:
         User.objects.all().delete()
         Book.objects.all().delete()
@@ -71,52 +72,51 @@ class TestLoanTokenApi(APITestCase):
         self.book.save()
         self.book.authors.add(self.author)
         
-        return super().setUp()        
+        return super().setUp()
     
-    def test_get_token(self):
-        response = self.client.post(
-            'http://127.0.0.1:8000/api/users/get_loan_token/',
-            {
-                'mail': 'testuser@gmail.com',
-                'password': hashlib.sha256('12345'.encode()).hexdigest()
-            }
+    def test_loan_book(self) : 
+        token = LoanToken.create_token(
+            'testuser@gmail.com', 
+            hashlib.sha256('12345'.encode()).hexdigest()    
         )
+        self.assertIsNotNone(token)
+        self.assertEqual(token.user, self.user) 
         
-        self.assertEqual(response.status_code,200)
-        self.assertIsNotNone(response.data['token'])
-        self.assertEqual(response.data['token'], LoanToken.objects.get(user=self.user).token)
-        
-    def test_get_token_wrong_email(self):
-        response = self.client.post(
-            'http://127.0.0.1:8000/api/users/get_loan_token/',
-            {
-                'mail': 'test@gmail.com',
-                'password': hashlib.sha256('12345'.encode()).hexdigest()
-            }
+        loan = Book.objects.get(id=1).loan(token.token)
+        self.assertIsInstance(loan, Loan)
+          
+    def test_loan_book_wrong_token(self) : 
+        token = LoanToken.create_token(
+            'testuser@gmail.com', 
+            hashlib.sha256('1234'.encode()).hexdigest()    
         )
-        
-        self.assertEqual(response.status_code,401)
-        
-    def test_get_token_wrong_email(self):
-        response = self.client.post(
-            'http://127.0.0.1:8000/api/users/get_loan_token/',
-            {
-                'mail': 'testuser@gmail.com',
-                'password': hashlib.sha256('1234'.encode()).hexdigest()
-            }
-        )
-        
-        self.assertEqual(response.status_code,401)
-
-
+        self.assertIsNone(token) 
     
-    def test_get_token_wrong_email_and_password(self):
-        response = self.client.post(
-            'http://127.0.0.1:8000/api/users/get_loan_token/',
-            {
-                'mail': 'test@gmail.com',
-                'password': hashlib.sha256('1234'.encode()).hexdigest()
-            }
-        )
+    def test_loan_book_already_loaned(self) : 
+        self.book.availability = 'LOA'
+        self.book.save()
         
-        self.assertEqual(response.status_code,401)
+        token = LoanToken.create_token(
+            'testuser@gmail.com', 
+            hashlib.sha256('12345'.encode()).hexdigest()    
+        )
+        self.assertIsNotNone(token)
+        self.assertEqual(token.user, self.user)
+        
+        loan = Book.objects.get(id=1).loan(token.token)
+        self.assertIsInstance(loan, Reservation)
+    
+    def test_loan_book_in_stock(self) : 
+        self.book.availability = 'STO'
+        self.book.save()
+        
+        token = LoanToken.create_token(
+            'testuser@gmail.com', 
+            hashlib.sha256('12345'.encode()).hexdigest()    
+        )
+        self.assertIsNotNone(token)
+        
+        loan = Book.objects.get(id=1).loan(token.token)
+        self.assertFalse(loan)
+        
+            

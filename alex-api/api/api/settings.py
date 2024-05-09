@@ -136,3 +136,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 DATABASE_TABLE_PREFIX = 'alex_demo'
+
+ALEX_LOAN_DURATION = 30

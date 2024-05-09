@@ -23,6 +23,7 @@ from django.utils.timezone import timedelta
 from django.utils.timezone import now
 
 from api.settings import DATABASE_TABLE_PREFIX
+from api.settings import ALEX_LOAN_DURATION
 
 import hashlib
 import random
@@ -324,6 +325,7 @@ class Loan(Model):
     
     book = ForeignKey('Book', related_name='loans', on_delete=CASCADE, help_text="Book associated with the loan.")
     token = ForeignKey(LoanToken, related_name='loans', on_delete=CASCADE, help_text="Loan token associated with the loan.")
+    render_date = DateField(default = now() + timedelta(days=ALEX_LOAN_DURATION), help_text="Date when the book must be returned.")
     
     created_at = DateTimeField(auto_now_add=True, help_text="Timestamp indicating when the loan was created.")
     updated_at = DateTimeField(auto_now=True, help_text="Timestamp indicating when the loan was last updated.") 
@@ -347,21 +349,17 @@ class Loan(Model):
         """
         Static method to create a new loan for a book using a token.
         """
-        print(f'Try to loan book {book_id} with token {token}')
         try:
             book = Book.objects.get(id=int(book_id))
             loan = LoanToken.objects.get(token=token)
             if book.availability == "AVA" and LoanToken.check_token(token):
                 book.availability = "LOA"
                 book.save()
-                Loan.objects.create(book=book, token=loan)
-                return True
+                return Loan.objects.create(book=book, token=loan)
             return False
         except Book.DoesNotExist:
-            print("Book does not exist")
             return False
         except LoanToken.DoesNotExist:
-            print("Token does not exist")
             return False
 
     @staticmethod 
@@ -435,6 +433,59 @@ class Loan(Model):
             return None 
     
     
+class Reservation(Model) :
+    
+    class Meta :
+        db_table = f'{DATABASE_TABLE_PREFIX}_reservation'
+        
+    id = AutoField(primary_key=True, help_text="Unique identifier for the reservation.")
+    
+    token = ForeignKey(LoanToken, related_name='reservations', on_delete=CASCADE, help_text="Loan token associated with the reservation.") 
+    book = ForeignKey('Book', related_name='reservations', on_delete=CASCADE, help_text="Book associated with the reservation.")
+    
+    availibility_date = DateField(null=True, blank=True, help_text="Date when the book will be available.")
+        
+    created_at = DateTimeField(auto_now_add=True, help_text="Timestamp indicating when the reservation was created.")
+    updated_at = DateTimeField(auto_now=True, help_text="Timestamp indicating when the reservation was last updated.")
+    
+    
+    @staticmethod 
+    def reserve(token:str, book_id:int):
+        """
+        Static method to create a new reservation for a book using a token.
+        """
+        try:
+            book = Book.objects.get(id=int(book_id))
+            reservation = LoanToken.objects.get(token=token)
+            if LoanToken.check_token(token):
+                book.availability = "RES"
+                book.save()
+                return Reservation.objects.create(book=book, token=reservation)
+            return False
+        except Book.DoesNotExist:
+            return False
+        except LoanToken.DoesNotExist:
+            return False
+
+    def compute_availibility_date(self):
+        """
+        Method to compute the availibility date of the book.
+        """
+        loans = Loan.objects.filter(book=self.book, active=True)
+        if loans.count() == 0:
+            self.availibility_date = now()
+        else:
+            self.availibility_date = loans.count() * ALEX_LOAN_DURATION
+        self.save()
+        
+    def clean(self) -> None:
+        if self.book.availability == "AVA":
+            raise ValidationError("Book is already available.")
+        if not LoanToken.check_token(self.token):
+            raise ValidationError("Token is not valid.")
+        self.compute_availibility_date()
+        super().clean()
+        
 class Book(Model):
     """
     Model to represent books.
@@ -496,14 +547,19 @@ class Book(Model):
             raise ValidationError("Book is actually loaned. You need to return it before to make it available.")
         super().clean()
      
-    def loan(self, token:str):
+    def loan(self, token:str) -> Loan | Reservation | bool:
         """
         Method to create a new loan for the book using a token.
         """
-        return Loan.loan(token, self.id)
+        if self.availability == "RES" or self.availability == "LOA":
+            return Reservation.reserve(token, self.id)
+        elif self.availability == "AVA":
+            return Loan.loan(token, self.id)
+        return False
     
     def get_loan(self, active:bool=False) -> Iterable[Loan]:
         """
         Method to get the loan associated with the book.
         """
         return Loan.objects.filter(book=self, active=active)
+

@@ -7,7 +7,6 @@ from rest_framework.request import Request
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-
 from server.models import Book
 from server.models import Author
 from server.models import Shelf
@@ -15,6 +14,8 @@ from server.models import Publisher
 from server.models import BookState
 from server.models import User
 from server.models import LoanToken
+from server.models import Loan
+from server.models import Reservation
 
 from server.serializer import BookSerializer, LoanTokenSerializer
 from server.serializer import AuthorSerializer
@@ -96,10 +97,17 @@ class BookViewSet(ModelViewSet):
     def loan(self, request: Request, pk=None):
         book = Book.objects.get(pk=pk)
         token = request.data.get('token')
+        
         if token is None:
             return Response({'error': 'Token is required.'}, status=status.HTTP_400_BAD_REQUEST)
-        if book.loan(token):
-            return Response({'message': 'Book loaned successfully.'}, status=status.HTTP_200_OK)
+        
+        loan = book.loan(token)
+        
+        if loan != False :
+            if isinstance(loan, Loan):
+                return Response({'message': 'Book loaned successfully', 'statut': 1}, status=status.HTTP_200_OK)
+            elif isinstance(loan, Reservation):
+                return Response({'message': 'Book reserved successfully', 'statut': 2}, status=status.HTTP_200_OK)
         return Response({'error': 'Book loan failed.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
