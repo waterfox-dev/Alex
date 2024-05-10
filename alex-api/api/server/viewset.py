@@ -105,9 +105,9 @@ class BookViewSet(ModelViewSet):
         
         if loan != False :
             if isinstance(loan, Loan):
-                return Response({'message': 'Book loaned successfully', 'statut': 1}, status=status.HTTP_200_OK)
+                return Response({'message': 'Book loaned successfully', 'status': 1}, status=status.HTTP_200_OK)
             elif isinstance(loan, Reservation):
-                return Response({'message': 'Book reserved successfully', 'statut': 2}, status=status.HTTP_200_OK)
+                return Response({'message': 'Book reserved successfully', 'status': 2}, status=status.HTTP_200_OK)
         return Response({'error': 'Book loan failed.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
