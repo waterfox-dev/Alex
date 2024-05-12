@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Iterable, Self
 
 from django.db.models import Model 
 
@@ -460,7 +460,9 @@ class Reservation(Model) :
             if LoanToken.check_token(token):
                 book.availability = "RES"
                 book.save()
-                return Reservation.objects.create(book=book, token=reservation)
+                reservation = Reservation.objects.create(book=book, token=reservation)
+                reservation.compute_availibility_date()
+                return reservation
             return False
         except Book.DoesNotExist:
             return False
@@ -485,7 +487,7 @@ class Reservation(Model) :
             raise ValidationError("Token is not valid.")
         self.compute_availibility_date()
         super().clean()
-        
+
 class Book(Model):
     """
     Model to represent books.

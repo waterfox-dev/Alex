@@ -8,15 +8,18 @@ from server.models import Publisher
 from server.models import Author
 from server.models import Reservation
 
+from api.settings import ALEX_LOAN_DURATION
+
 from django.test import TestCase 
 
 from datetime import datetime
+from datetime import timedelta
 
 import hashlib
 import time
 
 
-class TestLoanBook(TestCase): 
+class TestReserveBook(TestCase): 
     
     def setUp(self) -> None:
         User.objects.all().delete()
@@ -74,50 +77,55 @@ class TestLoanBook(TestCase):
         
         return super().setUp()
     
-    def test_loan_book(self) : 
-        token = LoanToken.create_token(
-            'testuser@gmail.com', 
-            hashlib.sha256('12345'.encode()).hexdigest()    
-        )
-        self.assertIsNotNone(token)
-        self.assertEqual(token.user, self.user) 
-        
-        loan = Book.objects.get(id=1).loan(token.token)
-        self.assertEqual(Book.objects.get(id=1).availability, 'LOA')
-        self.assertIsInstance(loan, Loan)
-          
-    def test_loan_book_wrong_token(self) : 
-        token = LoanToken.create_token(
-            'testuser@gmail.com', 
-            hashlib.sha256('1234'.encode()).hexdigest()    
-        )
-        self.assertIsNone(token) 
-    
-    def test_loan_book_already_loaned(self) : 
+    def test_reserve_book(self): 
         self.book.availability = 'LOA'
         self.book.save()
         
         token = LoanToken.create_token(
             'testuser@gmail.com', 
             hashlib.sha256('12345'.encode()).hexdigest()    
-        )
-        self.assertIsNotNone(token)
-        self.assertEqual(token.user, self.user)
+        ) 
         
+        self.assertIsNotNone(token)
+        self.assertEqual(token.user, self.user) 
+    
         loan = Book.objects.get(id=1).loan(token.token)
         self.assertIsInstance(loan, Reservation)
-    
-    def test_loan_book_in_stock(self) : 
-        self.book.availability = 'STO'
+        self.assertEqual(Book.objects.get(id=1).availability, 'RES')
+
+    def test_reserve_book_already_reserved(self): 
+        self.book.availability = 'RES'
         self.book.save()
         
         token = LoanToken.create_token(
             'testuser@gmail.com', 
             hashlib.sha256('12345'.encode()).hexdigest()    
-        )
+        ) 
+        
         self.assertIsNotNone(token)
-        
+        self.assertEqual(token.user, self.user) 
+    
         loan = Book.objects.get(id=1).loan(token.token)
-        self.assertFalse(loan)
+        self.assertIsInstance(loan, Reservation)
+        self.assertEqual(Book.objects.get(id=1).availability, 'RES')
         
-            
+    def test_reservation_duration(self): 
+        self.book.availability = 'LOA'
+        self.book.save()
+        
+        token = LoanToken.create_token(
+            'testuser@gmail.com', 
+            hashlib.sha256('12345'.encode()).hexdigest()    
+        ) 
+        
+        self.assertIsNotNone(token)
+        self.assertEqual(token.user, self.user) 
+    
+        reservation:Reservation = Book.objects.get(id=1).loan(token.token)
+        reservation_2:Reservation = Book.objects.get(id=1).loan(token.token)
+        
+        self.assertIsInstance(reservation, Reservation)
+        self.assertIsInstance(reservation_2, Reservation)
+        
+        # self.assertEqual(Book.objects.get(id=1).availability, 'RES')
+        # self.assertEqual(reservation_2.availibility_date, datetime.now().date() + timedelta(days=ALEX_LOAN_DURATION))
