@@ -127,5 +127,7 @@ class TestReserveBook(TestCase):
         self.assertIsInstance(reservation, Reservation)
         self.assertIsInstance(reservation_2, Reservation)
         
-        # self.assertEqual(Book.objects.get(id=1).availability, 'RES')
-        # self.assertEqual(reservation_2.availibility_date, datetime.now().date() + timedelta(days=ALEX_LOAN_DURATION))
+        self.assertEqual(Book.objects.get(id=1).availability, 'RES')
+        self.assertEqual(reservation_2.availibility_date.day, (datetime.now().date() + timedelta(days=ALEX_LOAN_DURATION*2)).day)
+        self.assertEqual(reservation_2.availibility_date.month, (datetime.now().date() + timedelta(days=ALEX_LOAN_DURATION*2)).month)
+        self.assertEqual(reservation_2.availibility_date.year, (datetime.now().date() + timedelta(days=ALEX_LOAN_DURATION*2)).year)

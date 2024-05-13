@@ -450,7 +450,7 @@ class Reservation(Model) :
         
     created_at = DateTimeField(auto_now_add=True, help_text="Timestamp indicating when the reservation was created.")
     updated_at = DateTimeField(auto_now=True, help_text="Timestamp indicating when the reservation was last updated.")
-    
+    active = BooleanField(default=True, help_text="Indicates whether the reservation is currently active.")
     
     @staticmethod 
     def reserve(token:str, book_id:int):
@@ -465,6 +465,7 @@ class Reservation(Model) :
                 book.save()
                 reservation = Reservation.objects.create(book=book, token=reservation)
                 reservation.compute_availibility_date()
+                reservation.save()
                 return reservation
             return False
         except Book.DoesNotExist:
@@ -476,12 +477,12 @@ class Reservation(Model) :
         """
         Method to compute the availibility date of the book.
         """
-        loans = Loan.objects.filter(book=self.book, active=True)
+        loans = Reservation.objects.filter(book=self.book, active=True)
         if loans.count() == 0:
             self.availibility_date = now()
         else:
-            self.availibility_date = loans.count() * ALEX_LOAN_DURATION
-        self.save()
+            self.availibility_date = datetime.now() + timedelta(days = loans.count() * ALEX_LOAN_DURATION)
+            self.save()
         
     def clean(self) -> None:
         if self.book.availability == "AVA":
