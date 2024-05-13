@@ -209,7 +209,7 @@ class User(Model):
         """
         Overrides the save method to hash the user's password before saving.
         """
-        self.password = hashlib.sha256(self.password.encode()).hexdigest()
+        self.password = hashlib.sha512(self.password.encode()).hexdigest()
         super(User, self).save(*args, **kwargs)
 
     @staticmethod 
@@ -287,7 +287,7 @@ class LoanToken(Model):
             user = User.objects.get(email=mail)
             
             if User.check_password(user.id, password):
-                token = hashlib.sha256(f'{mail}-{password}-{datetime.now()}-{random.randint(1, 1024)}'.encode()).hexdigest()
+                token = hashlib.sha512(f'{mail}-{password}-{datetime.now()}-{random.randint(1, 1024)}'.encode()).hexdigest()
                 token = LoanToken.objects.create(token=token, user=user)
                 return token
             return None

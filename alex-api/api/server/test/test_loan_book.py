@@ -77,7 +77,7 @@ class TestLoanBook(TestCase):
     def test_loan_book(self) : 
         token = LoanToken.create_token(
             'testuser@gmail.com', 
-            hashlib.sha256('12345'.encode()).hexdigest()    
+            hashlib.sha512('12345'.encode()).hexdigest()    
         )
         self.assertIsNotNone(token)
         self.assertEqual(token.user, self.user) 
@@ -89,7 +89,7 @@ class TestLoanBook(TestCase):
     def test_loan_book_wrong_token(self) : 
         token = LoanToken.create_token(
             'testuser@gmail.com', 
-            hashlib.sha256('1234'.encode()).hexdigest()    
+            hashlib.sha512('1234'.encode()).hexdigest()    
         )
         self.assertIsNone(token) 
     
@@ -99,7 +99,7 @@ class TestLoanBook(TestCase):
         
         token = LoanToken.create_token(
             'testuser@gmail.com', 
-            hashlib.sha256('12345'.encode()).hexdigest()    
+            hashlib.sha512('12345'.encode()).hexdigest()    
         )
         self.assertIsNotNone(token)
         self.assertEqual(token.user, self.user)
@@ -113,7 +113,7 @@ class TestLoanBook(TestCase):
         
         token = LoanToken.create_token(
             'testuser@gmail.com', 
-            hashlib.sha256('12345'.encode()).hexdigest()    
+            hashlib.sha512('12345'.encode()).hexdigest()    
         )
         self.assertIsNotNone(token)
         
