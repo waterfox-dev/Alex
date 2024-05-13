@@ -83,7 +83,7 @@ class TestReserveBook(TestCase):
         
         token = LoanToken.create_token(
             'testuser@gmail.com', 
-            hashlib.md5('12345'.encode()).hexdigest()    
+            '12345'   
         ) 
         
         self.assertIsNotNone(token)
@@ -99,7 +99,7 @@ class TestReserveBook(TestCase):
         
         token = LoanToken.create_token(
             'testuser@gmail.com', 
-            hashlib.md5('12345'.encode()).hexdigest()    
+            '12345'    
         ) 
         
         self.assertIsNotNone(token)
@@ -115,7 +115,7 @@ class TestReserveBook(TestCase):
         
         token = LoanToken.create_token(
             'testuser@gmail.com', 
-            hashlib.md5('12345'.encode()).hexdigest()    
+            '12345'    
         ) 
         
         self.assertIsNotNone(token)

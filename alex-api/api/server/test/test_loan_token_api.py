@@ -78,7 +78,7 @@ class TestLoanTokenApi(APITestCase):
             'http://127.0.0.1:8000/api/users/get_loan_token/',
             {
                 'mail': 'testuser@gmail.com',
-                'password': hashlib.md5('12345'.encode()).hexdigest()
+                'password': '12345'
             }
         )
         
@@ -91,7 +91,7 @@ class TestLoanTokenApi(APITestCase):
             'http://127.0.0.1:8000/api/users/get_loan_token/',
             {
                 'mail': 'test@gmail.com',
-                'password': hashlib.md5('12345'.encode()).hexdigest()
+                'password': '12345'
             }
         )
         
@@ -102,7 +102,7 @@ class TestLoanTokenApi(APITestCase):
             'http://127.0.0.1:8000/api/users/get_loan_token/',
             {
                 'mail': 'testuser@gmail.com',
-                'password': hashlib.md5('1234'.encode()).hexdigest()
+                'password': '1234'
             }
         )
         
@@ -115,7 +115,7 @@ class TestLoanTokenApi(APITestCase):
             'http://127.0.0.1:8000/api/users/get_loan_token/',
             {
                 'mail': 'test@gmail.com',
-                'password': hashlib.md5('1234'.encode()).hexdigest()
+                'password': '1234'
             }
         )
         

@@ -76,31 +76,31 @@ class TestLoanToken(TestCase):
     def test_get_token(self): 
         self.assertIsNotNone(LoanToken.create_token(
             'testuser@gmail.com', 
-            hashlib.md5('12345'.encode()).hexdigest()
+            '12345'
         ))    
         
     def test_get_token_wrong_email(self): 
         self.assertIsNone(LoanToken.create_token(
             'test@gmail.com', 
-            hashlib.md5('12345'.encode()).hexdigest()
+            '12345'
         ))
     
     def test_get_token_wrong_password(self): 
         self.assertIsNone(LoanToken.create_token(
             'testuser@gmail.com', 
-            hashlib.md5('1234'.encode()).hexdigest()
+            '1234'
         ))
 
     def test_get_token_wrong_email_and_password(self): 
         self.assertIsNone(LoanToken.create_token(
             'test@gmail.com', 
-            hashlib.md5('1234'.encode()).hexdigest()
+            '1234'
         ))
         
     def test_loan(self):
         token = LoanToken.create_token(
             'testuser@gmail.com', 
-            hashlib.md5('12345'.encode()).hexdigest()
+            '12345'
         )
         self.assertTrue(Loan.loan(token.token, self.book.id))
         self.assertTrue(Loan.objects.filter(book=self.book).exists())
@@ -108,7 +108,7 @@ class TestLoanToken(TestCase):
     def test_loan_not_available(self):
         token = LoanToken.create_token(
             'testuser@gmail.com', 
-            hashlib.md5('12345'.encode()).hexdigest()
+            '12345'
         )
         self.book.availability = 'LOA'
         self.book.save()
@@ -118,7 +118,7 @@ class TestLoanToken(TestCase):
     def test_loan_wrong_book(self): 
         token = LoanToken.create_token(
             'testuser@gmail.com', 
-            hashlib.md5('12345'.encode()).hexdigest()
+            '12345'
         )
         self.assertFalse(Loan.loan(token.token, 2))
         self.assertFalse(Loan.objects.filter(book=self.book).exists())
@@ -131,7 +131,7 @@ class TestLoanToken(TestCase):
     def test_return_book(self):
         token = LoanToken.create_token(
             'testuser@gmail.com', 
-            hashlib.md5('12345'.encode()).hexdigest()
+            '12345'
         )
         Loan.loan(token.token, self.book.id)
         self.assertTrue(Loan.return_book(self.book.id))
@@ -139,7 +139,7 @@ class TestLoanToken(TestCase):
     def test_token_expired(self):
         token = LoanToken.create_token(
             'testuser@gmail.com',  
-            hashlib.md5('12345'.encode()).hexdigest()
+           '12345'
         )
         token = LoanToken.objects.get(token=token.token)
         token.lifetime = 1

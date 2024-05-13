@@ -27,6 +27,7 @@ from api.settings import ALEX_LOAN_DURATION
 
 import hashlib
 import random
+import bcrypt
 
 
 class Author(Model):
@@ -209,7 +210,8 @@ class User(Model):
         """
         Overrides the save method to hash the user's password before saving.
         """
-        self.password = hashlib.md5(self.password.encode()).hexdigest()
+        salt = bcrypt.gensalt()
+        self.password = bcrypt.hashpw(self.password.encode(), salt).decode()
         super(User, self).save(*args, **kwargs)
 
     @staticmethod 
@@ -219,7 +221,7 @@ class User(Model):
         """
         try:
             user = User.objects.get(id=id)
-            return password == user.password
+            return bcrypt.checkpw(password.encode(), user.password.encode())
         except User.DoesNotExist:
             return False
         
@@ -287,7 +289,8 @@ class LoanToken(Model):
             user = User.objects.get(email=mail)
             
             if User.check_password(user.id, password):
-                token = hashlib.md5(f'{mail}-{password}-{datetime.now()}-{random.randint(1, 1024)}'.encode()).hexdigest()
+                salt = bcrypt.gensalt()
+                token = bcrypt.hashpw(f'{mail}-{datetime.now()}-{random.randint(1, 1024)}'.encode(), salt)
                 token = LoanToken.objects.create(token=token, user=user)
                 return token
             return None
