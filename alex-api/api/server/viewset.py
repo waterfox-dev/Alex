@@ -31,11 +31,13 @@ from server.serializer import BookStateSerializerList
 from server.serializer import PublisherSerializerList
 from server.serializer import UserSerializerList
 
+from server.permissions import AdminOrReadOnly
 
 
 class AuthorViewSet(ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
+    permission_classes = [AdminOrReadOnly]
 
     def get_queryset(self):
         return Author.objects.filter(active=True)
