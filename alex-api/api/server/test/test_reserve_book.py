@@ -131,3 +131,4 @@ class TestReserveBook(TestCase):
         self.assertEqual(reservation_2.availibility_date.day, (datetime.now().date() + timedelta(days=ALEX_LOAN_DURATION*2)).day)
         self.assertEqual(reservation_2.availibility_date.month, (datetime.now().date() + timedelta(days=ALEX_LOAN_DURATION*2)).month)
         self.assertEqual(reservation_2.availibility_date.year, (datetime.now().date() + timedelta(days=ALEX_LOAN_DURATION*2)).year)
+        

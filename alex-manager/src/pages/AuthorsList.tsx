@@ -1,20 +1,22 @@
-import {  Sheet,  CircularProgress } from "@mui/joy";
+import { Sheet,  CircularProgress } from "@mui/joy";
 import Table from "@mui/joy/Table";
 
-import Shelf from "../types/shelf";
+import Author from "../types/author";
 import { useQuery } from "@tanstack/react-query";
 import ConnectionErrorModal from "../components/ConnectionErrorModal";
 
-function ShelfList() {
+
+
+function AuthorsList() {
 
   var { data, isLoading, isError } = useQuery({
     queryKey: ['shelves'],
-    queryFn: () => fetch('http://localhost:8000/api/shelves').then(
+    queryFn: () => fetch('http://localhost:8000/api/authors').then(
       res => res.json()
     ),
   });
 
-  data = data as Shelf[];
+  data = data as Author[];
 
   if (isLoading) return  <CircularProgress value={10} />
   if (isError) return <ConnectionErrorModal />
@@ -28,15 +30,15 @@ function ShelfList() {
             <tr>
               <th>ID</th>
               <th>Name</th>
-              <th>Description</th>
+              <th>First Name</th>
             </tr>
           </thead>
           <tbody>
-            {data.map((shelf: Shelf) => (
-              <tr key={shelf.id}>
-                <td>{shelf.id}</td>
-                <td>{shelf.name}</td>
-                <td>{shelf.description}</td>
+            {data.map((author: Author) => (
+              <tr key={author.id}>
+                <td>{author.id}</td>
+                <td>{author.name}</td>
+                <td>{author.first_name}</td>
               </tr>
               ))
             }
@@ -47,5 +49,5 @@ function ShelfList() {
   );
 }
 
-export default ShelfList;
+export default AuthorsList;
 

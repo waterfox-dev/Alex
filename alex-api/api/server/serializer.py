@@ -55,14 +55,14 @@ class AuthorSerializerList(ModelSerializer):
     
     class Meta:
         model = Author
-        fields = ['name', 'first_name']
+        fields = ['id', 'name', 'first_name']
         
 
 class ShelfSerializerList(ModelSerializer):
     
     class Meta:
         model = Shelf
-        fields = ['name']
+        fields = ['id', 'name', 'description']
         
 
 

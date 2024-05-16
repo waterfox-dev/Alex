@@ -33,11 +33,13 @@ function MenuBar() {
           </ListItemButton>
         </ListItem>
       </Link>
-      <ListItem variant="plain">
-        <ListItemButton>
-          <ListItemContent><HiOutlineUsers /> Author</ListItemContent>
-        </ListItemButton>
-      </ListItem>
+      <Link to="/authors" style={{ textDecoration: 'none', textDecorationColor: 'none' }}>
+        <ListItem variant="plain">
+          <ListItemButton>
+            <ListItemContent><HiOutlineUsers /> Authors</ListItemContent>
+          </ListItemButton>
+        </ListItem>
+      </Link>
       <Divider />
       <ListItem variant="plain">
         <ListItemButton>

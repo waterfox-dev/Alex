@@ -10,6 +10,7 @@ import BookList from './pages/BookList';
 import BookDetail from './pages/BookDetail';
 import ShelvesList from './pages/ShelvesList';
 import MenuBar from './components/MenuBar';
+import AuthorList from './pages/AuthorsList';
 
 import { Grid } from '@mui/joy';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -29,6 +30,7 @@ function App() {
             <Route path="/books" element={<BookList />} />
             <Route path="/books/:id" element={<BookDetail />} />
             <Route path="/shelves" element={<ShelvesList/>} />
+            <Route path="/authors" element={<AuthorList/>} />
           </Routes>
         </Grid>
       </Grid>
