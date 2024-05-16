@@ -23,7 +23,7 @@ class TestLoanBookApi(APITestCase):
         response = self.client.post(
             self.secure_route, 
             HTTP_AUTHORIZATION=f"Bearer {token['access']}", 
-            data={""}
+            data={"name": "Test", "first_name": "Test"}
         )
         
         self.assertEqual(response.status_code, 201)
