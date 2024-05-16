@@ -3,6 +3,7 @@ from django.urls import path
 from django.urls.conf import include
 
 from rest_framework import routers
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -39,5 +40,6 @@ urlpatterns = [
     path('redoc/', SchemaView.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('api-auth/', include('rest_framework.urls')),
     path('api/', include(router.urls)),
-
+    path('api/token',TokenObtainPairView.as_view(), name='token_obtain_pair'), 
+    path('api/token/refresh',TokenObtainPairView.as_view(), name='token_refresh_pair'),
 ]
