@@ -448,7 +448,7 @@ class Reservation(Model) :
     token = ForeignKey(LoanToken, related_name='reservations', on_delete=CASCADE, help_text="Loan token associated with the reservation.") 
     book = ForeignKey('Book', related_name='reservations', on_delete=CASCADE, help_text="Book associated with the reservation.")
     
-    availibility_date = DateField(null=True, blank=True, help_text="Date when the book will be available.")
+    availability_date = DateField(null=True, blank=True, help_text="Date when the book will be available.")
         
     created_at = DateTimeField(auto_now_add=True, help_text="Timestamp indicating when the reservation was created.")
     updated_at = DateTimeField(auto_now=True, help_text="Timestamp indicating when the reservation was last updated.")
@@ -466,7 +466,7 @@ class Reservation(Model) :
                 book.availability = "RES"
                 book.save()
                 reservation = Reservation.objects.create(book=book, token=reservation)
-                reservation.compute_availibility_date()
+                reservation.compute_availability_date()
                 reservation.save()
                 return ApiMessage("Reservation created", 200)
             return ApiMessage("Reservation failed", 201)
@@ -475,15 +475,15 @@ class Reservation(Model) :
         except LoanToken.DoesNotExist:
             return ApiMessage("Token not found", 203)
 
-    def compute_availibility_date(self):
+    def compute_availability_date(self):
         """
         Method to compute the availibility date of the book.
         """
         loans = Reservation.objects.filter(book=self.book, active=True)
         if loans.count() == 0:
-            self.availibility_date = now()
+            self.availability_date = now()
         else:
-            self.availibility_date = datetime.now() + timedelta(days = loans.count() * ALEX_LOAN_DURATION)
+            self.availability_date = datetime.now() + timedelta(days = loans.count() * ALEX_LOAN_DURATION)
             self.save()
         
     def clean(self) -> None:
@@ -491,7 +491,7 @@ class Reservation(Model) :
             raise ValidationError("Book is already available.")
         if not LoanToken.check_token(self.token):
             raise ValidationError("Token is not valid.")
-        self.compute_availibility_date()
+        self.compute_availability_date()
         super().clean()
 
 class Book(Model):

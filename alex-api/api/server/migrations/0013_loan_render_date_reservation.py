@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
             name='Reservation',
             fields=[
                 ('id', models.AutoField(help_text='Unique identifier for the reservation.', primary_key=True, serialize=False)),
-                ('availibility_date', models.DateField(blank=True, help_text='Date when the book will be available.', null=True)),
+                ('availability_date', models.DateField(blank=True, help_text='Date when the book will be available.', null=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True, help_text='Timestamp indicating when the reservation was created.')),
                 ('updated_at', models.DateTimeField(auto_now=True, help_text='Timestamp indicating when the reservation was last updated.')),
                 ('book', models.ForeignKey(help_text='Book associated with the reservation.', on_delete=django.db.models.deletion.CASCADE, related_name='reservations', to='server.book')),
