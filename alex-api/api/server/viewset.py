@@ -23,6 +23,7 @@ from server.serializer import ShelfSerializer
 from server.serializer import BookStateSerializer
 from server.serializer import PublisherSerializer
 from server.serializer import UserSerializer
+from server.serializer import ApiMessageSerializer
 
 from server.serializer import AuthorSerializerList
 from server.serializer import BookSerializerList
@@ -105,12 +106,7 @@ class BookViewSet(ModelViewSet):
         
         loan = book.loan(token)
         
-        if loan != False :
-            if isinstance(loan, Loan):
-                return Response({'message': 'Book loaned successfully', 'status': 1}, status=status.HTTP_200_OK)
-            elif isinstance(loan, Reservation):
-                return Response({'message': 'Book reserved successfully', 'status': 2}, status=status.HTTP_200_OK)
-        return Response({'error': 'Book loan failed.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': loan.message, 'status': loan.status}, status=status.HTTP_200_OK)
 
 
 class PublisherViewSet(ModelViewSet):

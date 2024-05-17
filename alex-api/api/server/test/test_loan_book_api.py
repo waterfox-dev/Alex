@@ -89,7 +89,7 @@ class TestLoanBookApi(APITestCase):
             }
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data['status'], 1)
+        self.assertEqual(response.data['status'], 100)
         
     def test_loan_book_no_token(self) :
         response = self.client.post(
@@ -104,7 +104,8 @@ class TestLoanBookApi(APITestCase):
                 'token': 'wrong_token'
             }
         )
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['status'], 103)
         
     def test_loan_book_already_loaned(self) :
         self.book.availability = 'LOA'
@@ -125,5 +126,5 @@ class TestLoanBookApi(APITestCase):
             }
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data['status'], 2)
+        self.assertEqual(response.data['status'], 200)
         

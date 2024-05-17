@@ -8,6 +8,8 @@ from server.models import Publisher
 from server.models import Author
 from server.models import Reservation
 
+from server.dataclass.api_message import ApiMessage
+
 from django.test import TestCase 
 
 from datetime import datetime
@@ -84,7 +86,7 @@ class TestLoanBook(TestCase):
         
         loan = Book.objects.get(id=1).loan(token.token)
         self.assertEqual(Book.objects.get(id=1).availability, 'LOA')
-        self.assertIsInstance(loan, Loan)
+        self.assertEqual(loan.status, 100)
           
     def test_loan_book_wrong_token(self) : 
         token = LoanToken.create_token(
@@ -105,7 +107,7 @@ class TestLoanBook(TestCase):
         self.assertEqual(token.user, self.user)
         
         loan = Book.objects.get(id=1).loan(token.token)
-        self.assertIsInstance(loan, Reservation)
+        self.assertEqual(loan.status, 200)
     
     def test_loan_book_in_stock(self) : 
         self.book.availability = 'STO'
@@ -118,6 +120,6 @@ class TestLoanBook(TestCase):
         self.assertIsNotNone(token)
         
         loan = Book.objects.get(id=1).loan(token.token)
-        self.assertFalse(loan)
+        self.assertEqual(loan.status, 1001)
         
             

@@ -10,6 +10,9 @@ from server.models import User
 from server.models import Loan
 from server.models import LoanToken
 
+from server.dataclass.api_message import ApiMessage
+
+
 class AuthorSerializer(ModelSerializer):
         
     class Meta:
@@ -122,3 +125,11 @@ class LoanTokenSerializer(ModelSerializer):
     class Meta:
         model = LoanToken
         fields = '__all__'
+        
+
+class ApiMessageSerializer(ModelSerializer):
+    
+    class Meta:
+        model = ApiMessage
+        fields = ['message', 'status_code'] 
+

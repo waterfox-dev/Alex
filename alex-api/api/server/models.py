@@ -25,7 +25,8 @@ from django.utils.timezone import now
 from api.settings import DATABASE_TABLE_PREFIX
 from api.settings import ALEX_LOAN_DURATION
 
-import hashlib
+from server.dataclass.api_message import ApiMessage
+
 import random
 import bcrypt
 
@@ -358,12 +359,13 @@ class Loan(Model):
             if book.availability == "AVA" and LoanToken.check_token(token):
                 book.availability = "LOA"
                 book.save()
-                return Loan.objects.create(book=book, token=loan)
-            return False
+                Loan.objects.create(book=book, token=loan)
+                return ApiMessage("Loan created", 100)
+            return ApiMessage("Book not available", 101)
         except Book.DoesNotExist:
-            return False
+            return ApiMessage("Book not found", 102)
         except LoanToken.DoesNotExist:
-            return False
+            return ApiMessage("Token not found", 103)
 
     @staticmethod 
     def return_book(book_id:int):
@@ -377,14 +379,14 @@ class Loan(Model):
                 book.availability = "AVA"
                 book.save()
                 loan.active = False
-                return True
+                return ApiMessage("Book returned", 110)
             return False
         except Book.DoesNotExist:
-            return False
+            return ApiMessage("Book not found", 111)
         except LoanToken.DoesNotExist:
-            return False
+            return ApiMessage("Token not found", 112)
         except Loan.DoesNotExist:
-            return False
+            return ApiMessage("Loan not found", 113)
 
     @staticmethod 
     def get_loans(token:str) -> Iterable['Loan']:
@@ -466,12 +468,12 @@ class Reservation(Model) :
                 reservation = Reservation.objects.create(book=book, token=reservation)
                 reservation.compute_availibility_date()
                 reservation.save()
-                return reservation
-            return False
+                return ApiMessage("Reservation created", 200)
+            return ApiMessage("Reservation failed", 201)
         except Book.DoesNotExist:
-            return False
+            return ApiMessage("Book not found", 202)
         except LoanToken.DoesNotExist:
-            return False
+            return ApiMessage("Token not found", 203)
 
     def compute_availibility_date(self):
         """
@@ -553,7 +555,7 @@ class Book(Model):
             raise ValidationError("Book is actually loaned. You need to return it before to make it available.")
         super().clean()
      
-    def loan(self, token:str) -> Loan | Reservation | bool:
+    def loan(self, token:str) -> ApiMessage:
         """
         Method to create a new loan for the book using a token.
         """
@@ -561,7 +563,7 @@ class Book(Model):
             return Reservation.reserve(token, self.id)
         elif self.availability == "AVA":
             return Loan.loan(token, self.id)
-        return False
+        return ApiMessage("Book not available", 1001)
     
     def get_loan(self, active:bool=False) -> Iterable[Loan]:
         """

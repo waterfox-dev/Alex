@@ -112,7 +112,7 @@ class TestLoanToken(TestCase):
         )
         self.book.availability = 'LOA'
         self.book.save()
-        self.assertFalse(Loan.loan(token.token, self.book.id))
+        self.assertEqual(Loan.loan(token.token, self.book.id).status, 101)
         self.assertFalse(Loan.objects.filter(book=self.book).exists())
         
     def test_loan_wrong_book(self): 
@@ -120,12 +120,12 @@ class TestLoanToken(TestCase):
             'testuser@gmail.com', 
             '12345'
         )
-        self.assertFalse(Loan.loan(token.token, 2))
+        self.assertEqual(Loan.loan(token.token, 2).status, 102)
         self.assertFalse(Loan.objects.filter(book=self.book).exists())
     
     def test_loan_wrong_token(self):    
 
-        self.assertFalse(Loan.loan('wrong_token', self.book.id))
+        self.assertEqual(Loan.loan('wrong_token', self.book.id).status, 103)
         self.assertFalse(Loan.objects.filter(book=self.book).exists())
         
     def test_return_book(self):
