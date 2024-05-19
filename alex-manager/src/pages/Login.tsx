@@ -7,19 +7,18 @@ import FormLabel from '@mui/joy/FormLabel';
 import Input from '@mui/joy/Input';
 import Button from '@mui/joy/Button';
 
-import ApiToken from '../utils/ApitToken';
+import { useNavigate } from 'react-router-dom';
 
-async function GetToken(username: string, password: string){
+import ApiToken from '../utils/ApiToken';
+
+async function GetToken(username: string, password: string) {
   ApiToken.setCreds(username, password);
-  
-  localStorage.setItem('token', ApiToken.getToken());
+  await ApiToken.refreshToken(); 
+  console.log("Token refreshed");
 }
 
-
 function Login() {
-
-  var username: string = ''; 
-  var password: string = '';
+  const navigate = useNavigate();
 
   return (
     <main>
@@ -45,27 +44,27 @@ function Login() {
           </Typography>
           <Typography level="body-sm">Sign in to continue.</Typography>
         </div>
-        <form onSubmit={(event)=>{
+        <form onSubmit={async (event) => {
             event.preventDefault();
             const form = new FormData(event.currentTarget);
-            username = form.get('username') as string;
-            password = form.get('password') as string;
-            GetToken(username, password);
+            const username = form.get('username') as string;
+            const password = form.get('password') as string;
+            await GetToken(username, password);  
+            if (ApiToken.isLogged()) {
+              navigate('/books');
+            }
           }}>
           <FormControl>
             <FormLabel>Username</FormLabel>
             <Input
-              // html input attribute
               name="username"
               type="text"
               placeholder="johndoe@email.com"
-              
             />
           </FormControl>
           <FormControl>
             <FormLabel>Password</FormLabel>
             <Input
-              // html input attribute
               name="password"
               type="password"
               placeholder="password"
