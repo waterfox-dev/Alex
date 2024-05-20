@@ -24,6 +24,7 @@ from server.serializer import BookStateSerializer
 from server.serializer import PublisherSerializer
 from server.serializer import UserSerializer
 from server.serializer import ApiMessageSerializer
+from server.serializer import LoanSerializer
 
 from server.serializer import AuthorSerializerList
 from server.serializer import BookSerializerList
@@ -184,3 +185,9 @@ class UserViewSet(ModelViewSet):
             return Response(LoanTokenSerializer(token).data, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid email or password.'}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    @action(detail=True, methods=['GET']) 
+    def loans(self, request: Request, pk=None):
+        user = User.objects.get(pk=pk)    
+        loans = Loan.get_loans_by_user(user.id)
+        return Response(LoanSerializer(loans, many=True).data, status=status.HTTP_200_OK)

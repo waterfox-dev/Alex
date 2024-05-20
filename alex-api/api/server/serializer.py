@@ -41,33 +41,20 @@ class PublisherSerializer(ModelSerializer):
         fields = '__all__'
 
 
-class BookSerializer(ModelSerializer):
-    
-    authors = AuthorSerializer(many=True)
-    shelf = ShelfSerializer()
-    state = BookStateSerializer()
-    publisher = PublisherSerializer()
-    
-    
-    class Meta:
-        model = Book
-        fields = ['id', 'isbn', 'title', 'authors', 'shelf', 'editions', 'state', 'availability', 'publisher', 'cover']
- 
-
 class AuthorSerializerList(ModelSerializer):
     
     class Meta:
         model = Author
         fields = ['id', 'name', 'first_name']
         
+  
 
 class ShelfSerializerList(ModelSerializer):
     
     class Meta:
         model = Shelf
         fields = ['id', 'name', 'description']
-        
-
+                
 
 class BookStateSerializerList(ModelSerializer):
     
@@ -75,17 +62,26 @@ class BookStateSerializerList(ModelSerializer):
         model = BookState
         fields = ['name'] 
         
-
         
-
 class PublisherSerializerList(ModelSerializer):
     
     class Meta:
         model = Publisher
         fields = ['name']
         
+            
+class BookSerializer(ModelSerializer):
+    
+    authors = AuthorSerializerList(many=True)
+    shelf = ShelfSerializerList()
+    state = BookStateSerializerList()
+    publisher = PublisherSerializerList()
+    
+    
+    class Meta:
+        model = Book
+        fields = ['id', 'isbn', 'title', 'authors', 'shelf', 'editions', 'state', 'availability', 'publisher', 'cover']       
 
-        
 
 class BookSerializerList(ModelSerializer):
     
@@ -133,3 +129,11 @@ class ApiMessageSerializer(ModelSerializer):
         model = ApiMessage
         fields = ['message', 'status_code'] 
 
+
+class LoanSerializer(ModelSerializer):
+    
+    book = BookSerializer()
+    
+    class Meta:
+        model = Loan
+        fields = '__all__'

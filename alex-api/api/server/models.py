@@ -282,7 +282,7 @@ class LoanToken(Model):
             return False
         
     @staticmethod 
-    def create_token(mail: str, password: str) -> str:
+    def create_token(mail: str, password: str) -> 'LoanToken':
         """
         Static method to create a new loan token for a user.
         """
@@ -293,6 +293,7 @@ class LoanToken(Model):
                 salt = bcrypt.gensalt()
                 token = bcrypt.hashpw(f'{mail}-{datetime.now()}-{random.randint(1, 1024)}'.encode(), salt)
                 token = LoanToken.objects.create(token=token, user=user)
+                token.save()
                 return token
             return None
         
