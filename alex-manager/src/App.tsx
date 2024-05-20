@@ -1,12 +1,16 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
 import BookList from './pages/BookList';
 import BookDetail from './pages/BookDetail';
 import ShelvesList from './pages/ShelvesList';
 import MenuBar from './components/MenuBar';
 import AuthorList from './pages/AuthorsList';
 import Login from './pages/Login';
+import UserList from './pages/UserList';
+
 import ProtectedRoute from './components/ProtectedRoute'; 
+
 import { Grid } from '@mui/joy';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -28,6 +32,7 @@ function App() {
                 <Route path="/books/:id" element={<BookDetail />} />
                 <Route path="/shelves" element={<ShelvesList />} />
                 <Route path="/authors" element={<AuthorList />} />
+                <Route path="/users" element={<UserList />} />
               </Route>
             </Routes>
           </Grid>
