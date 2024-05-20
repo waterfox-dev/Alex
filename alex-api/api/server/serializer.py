@@ -98,11 +98,12 @@ class BookSerializerList(ModelSerializer):
 
 class UserSerializer(ModelSerializer):
     
+
     loans = SerializerMethodField()
 
     def get_loans(self, obj: User):
         loans = Loan.get_loans_by_user(obj.id)
-        return BookSerializerList(loans, many=True).data
+        return LoanSerializer(loans, many=True).data
     
     class Meta:
         model = User
@@ -137,3 +138,12 @@ class LoanSerializer(ModelSerializer):
     class Meta:
         model = Loan
         fields = '__all__'
+        
+
+class LoanSerializerList(ModelSerializer):
+    
+    book = BookSerializerList()
+    
+    class Meta:
+        model = Loan
+        fields = 'id', 'book', 'render_date'
