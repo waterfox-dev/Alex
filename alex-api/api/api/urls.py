@@ -15,6 +15,8 @@ from server.viewset import BookStateViewSet
 from server.viewset import BookViewSet
 from server.viewset import UserViewSet
 
+from server.views import ApiView
+
 SchemaView = get_schema_view(
     openapi.Info(
         title="Alex API", default_version="v1", 
@@ -42,4 +44,5 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api/token',TokenObtainPairView.as_view(), name='token_obtain_pair'), 
     path('api/token/refresh',TokenObtainPairView.as_view(), name='token_refresh_pair'),
+    path('api/appqr', ApiView.get_app_qr, name='app_qr')
 ]
