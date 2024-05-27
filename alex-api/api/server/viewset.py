@@ -191,3 +191,18 @@ class UserViewSet(ModelViewSet):
         user = User.objects.get(pk=pk)    
         loans = Loan.get_loans_by_user(user.id)
         return Response(LoanSerializer(loans, many=True).data, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['POST'])
+    def check_password(self, request: Request):
+        email = request.data.get('mail')
+        password = request.data.get('password')
+        
+        if email is None or password is None:
+            return Response({'error': 'Email and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+        user = User.objects.filter(email=email)[0]
+        if User.check_password(user.id, password):
+            json = UserSerializer(user).data
+            return Response({'exists': json}, status=status.HTTP_200_OK)
+        return Response({'exists': False, 'message': 'Wrong email or password.'}, status=status.HTTP_200_OK)
