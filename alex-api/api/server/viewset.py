@@ -34,11 +34,13 @@ from server.serializer import PublisherSerializerList
 from server.serializer import UserSerializerList
 
 from server.permissions import AdminOrReadOnly
+from server.permissions import AdminOrOwner
 
 
 class AuthorViewSet(ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
+    
     permission_classes = [AdminOrReadOnly]
 
     def get_queryset(self):
@@ -54,6 +56,9 @@ class ShelfViewSet(ModelViewSet):
 
     queryset = Shelf.objects.all()
     serializer_class = ShelfSerializer
+    
+    permission_classes = [AdminOrReadOnly]
+    
 
     def get_queryset(self):
         return Shelf.objects.filter(active=True)
@@ -70,6 +75,9 @@ class BookStateViewSet(ModelViewSet):
 
     queryset = BookState.objects.all()
     serializer_class = BookStateSerializer
+    
+    permission_classes = [AdminOrReadOnly]
+    
 
     def get_queryset(self):
         return BookState.objects.filter(active=True)
@@ -87,6 +95,8 @@ class BookViewSet(ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
+    permission_classes = [AdminOrReadOnly]
+
     def get_queryset(self):
         return Book.objects.filter(active=True)
 
@@ -97,7 +107,7 @@ class BookViewSet(ModelViewSet):
 
         return BookSerializer
     
-    @action(detail=True, methods=['POST'])
+    @action(detail=True, methods=['POST'], permission_classes=[])
     def loan(self, request: Request, pk=None):
         book = Book.objects.get(pk=pk)
         token = request.data.get('token')
@@ -114,6 +124,8 @@ class PublisherViewSet(ModelViewSet):
 
     queryset = Publisher.objects.all()
     serializer_class = PublisherSerializer
+
+    permission_classes = [AdminOrReadOnly]
 
     def get_queryset(self):
         return Publisher.objects.filter(active=True)
@@ -132,6 +144,7 @@ class UserViewSet(ModelViewSet):
     serializer_class = UserSerializer
     mail_parameter = openapi.Parameter('mail', openapi.IN_QUERY, description="The mail of the user", type=openapi.TYPE_STRING)
     password_parameter = openapi.Parameter('password', openapi.IN_QUERY, description="The password of the user", type=openapi.TYPE_STRING)
+
 
     def get_queryset(self):
         return User.objects.filter(active=True)
